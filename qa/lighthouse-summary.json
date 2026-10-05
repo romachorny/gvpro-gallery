@@ -1,0 +1,35 @@
+{
+  "mobile": {
+    "scores": {
+      "performance": 34,
+      "accessibility": 100,
+      "best-practices": 96,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": "2.0 s",
+      "largest-contentful-paint": "8.8 s",
+      "total-blocking-time": "14,330 ms",
+      "cumulative-layout-shift": "0.034",
+      "speed-index": "18.2 s",
+      "interactive": "16.7 s"
+    }
+  },
+  "mobile-lite": {
+    "scores": {
+      "performance": 96,
+      "accessibility": 100,
+      "best-practices": 96,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": "1.4 s",
+      "largest-contentful-paint": "1.4 s",
+      "total-blocking-time": "0 ms",
+      "cumulative-layout-shift": "0.034",
+      "speed-index": "5.2 s",
+      "interactive": "1.4 s"
+    }
+  },
+  "note": "Lighthouse 12.8, headless Chromium with SwiftShader (software WebGL), simulated mobile throttling. TBT/TTI of the 3D page are dominated by CPU-rendered WebGL and are not representative of a real phone GPU; the lite run shows the page without WebGL."
+}
