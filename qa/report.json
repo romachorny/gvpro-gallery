@@ -1,0 +1,1064 @@
+{
+  "base": "http://localhost:4173",
+  "runs": [
+    {
+      "id": "390x844-en",
+      "checks": [
+        {
+          "name": "intro visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro ends on its own",
+          "ok": true,
+          "detail": "3381 ms"
+        },
+        {
+          "name": "intro skipped by tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": "390>390"
+        },
+        {
+          "name": "3D mode (not lite)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe hint appears",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe changes shot",
+          "ok": true,
+          "detail": "0 -> 1"
+        },
+        {
+          "name": "swipe hint gone after use",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "wheel changes shot",
+          "ok": true,
+          "detail": "2 -> 3"
+        },
+        {
+          "name": "arrow key changes shot",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "hero title",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "tap hint on live planet",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "planet projected on screen",
+          "ok": true,
+          "detail": "{\"x\":187.70138062918613,\"y\":260.64497499570933}"
+        },
+        {
+          "name": "dive opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card open link href",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card link target/rel",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "back closes card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live links in list",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/"
+        },
+        {
+          "name": "coming soon count",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to content",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (content)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "contacts links",
+          "ok": true,
+          "detail": "https://wa.me/972539760820?text=gallery,https://t.me/GenVidPro,https://genvidpro.com/"
+        },
+        {
+          "name": "email text + copy button",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "trace": [
+        "finishIntro false 7485     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at http://localhost:4173/assets/index-C4RkrX-1.js:8:1164",
+        "intro pointerdown mouse 195 422 true",
+        "finishIntro false 1622     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at HTMLDivElement.<anonymous> (http://localhost:4173/assets/index",
+        "goTo 1     at HTMLElement.<anonymous> (http://localhost:4173/assets/index-C4RkrX-1.js:8:2397)",
+        "goTo 2     at eval (eval at evaluate (:290:30), <anonymous>:1:22)",
+        "goTo 3     at w.addEventListener.passive (http://localhost:4173/assets/index-C4RkrX-1.js:8:3003)",
+        "goTo 4     at http://localhost:4173/assets/index-C4RkrX-1.js:8:3354",
+        "goTo 1     at eval (eval at evaluate (:290:30), <anonymous>:1:22)"
+      ],
+      "loadMs": 152,
+      "introMs": 3381
+    },
+    {
+      "id": "390x844-he",
+      "checks": [
+        {
+          "name": "intro visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro ends on its own",
+          "ok": true,
+          "detail": "4464 ms"
+        },
+        {
+          "name": "intro skipped by tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": "390>390"
+        },
+        {
+          "name": "3D mode (not lite)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe hint appears",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe changes shot",
+          "ok": true,
+          "detail": "0 -> 6"
+        },
+        {
+          "name": "swipe hint gone after use",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "wheel changes shot",
+          "ok": true,
+          "detail": "2 -> 3"
+        },
+        {
+          "name": "arrow key changes shot",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "hero title",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "tap hint on live planet",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "planet projected on screen",
+          "ok": true,
+          "detail": "{\"x\":185.57491176013315,\"y\":260.56207546647556}"
+        },
+        {
+          "name": "dive opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card open link href",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card link target/rel",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "back closes card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live links in list",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/"
+        },
+        {
+          "name": "coming soon count",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to content",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (content)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "contacts links",
+          "ok": true,
+          "detail": "https://wa.me/972539760820?text=gallery,https://t.me/GenVidPro,https://genvidpro.com/"
+        },
+        {
+          "name": "email text + copy button",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "trace": [
+        "finishIntro false 5464     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at http://localhost:4173/assets/index-C4RkrX-1.js:8:1164",
+        "intro pointerdown mouse 195 422 true",
+        "finishIntro false 1625     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at HTMLDivElement.<anonymous> (http://localhost:4173/assets/index",
+        "goTo -1     at HTMLElement.<anonymous> (http://localhost:4173/assets/index-C4RkrX-1.js:8:2397)",
+        "goTo 2     at eval (eval at evaluate (:290:30), <anonymous>:1:22)",
+        "goTo 3     at w.addEventListener.passive (http://localhost:4173/assets/index-C4RkrX-1.js:8:3003)",
+        "goTo 2     at http://localhost:4173/assets/index-C4RkrX-1.js:8:3354",
+        "goTo 1     at eval (eval at evaluate (:290:30), <anonymous>:1:22)"
+      ],
+      "loadMs": 51,
+      "introMs": 4464
+    },
+    {
+      "id": "412x915-en",
+      "checks": [
+        {
+          "name": "intro visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro ends on its own",
+          "ok": true,
+          "detail": "3869 ms"
+        },
+        {
+          "name": "intro skipped by tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": "412>412"
+        },
+        {
+          "name": "3D mode (not lite)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe hint appears",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe changes shot",
+          "ok": true,
+          "detail": "0 -> 1"
+        },
+        {
+          "name": "swipe hint gone after use",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "wheel changes shot",
+          "ok": true,
+          "detail": "2 -> 3"
+        },
+        {
+          "name": "arrow key changes shot",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "hero title",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "tap hint on live planet",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "planet projected on screen",
+          "ok": true,
+          "detail": "{\"x\":198.99858846244933,\"y\":282.62255214774706}"
+        },
+        {
+          "name": "dive opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card open link href",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card link target/rel",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "back closes card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live links in list",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/"
+        },
+        {
+          "name": "coming soon count",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to content",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (content)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "contacts links",
+          "ok": true,
+          "detail": "https://wa.me/972539760820?text=gallery,https://t.me/GenVidPro,https://genvidpro.com/"
+        },
+        {
+          "name": "email text + copy button",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "trace": [
+        "finishIntro false 4617     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at http://localhost:4173/assets/index-C4RkrX-1.js:8:1164",
+        "intro pointerdown mouse 206 457.5 true",
+        "finishIntro false 1614     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at HTMLDivElement.<anonymous> (http://localhost:4173/assets/index",
+        "goTo 1     at HTMLElement.<anonymous> (http://localhost:4173/assets/index-C4RkrX-1.js:8:2397)",
+        "goTo 2     at eval (eval at evaluate (:290:30), <anonymous>:1:22)",
+        "goTo 3     at w.addEventListener.passive (http://localhost:4173/assets/index-C4RkrX-1.js:8:3003)",
+        "goTo 4     at http://localhost:4173/assets/index-C4RkrX-1.js:8:3354",
+        "goTo 1     at eval (eval at evaluate (:290:30), <anonymous>:1:22)"
+      ],
+      "loadMs": 49,
+      "introMs": 3869
+    },
+    {
+      "id": "412x915-he",
+      "checks": [
+        {
+          "name": "intro visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro ends on its own",
+          "ok": true,
+          "detail": "4004 ms"
+        },
+        {
+          "name": "intro skipped by tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": "412>412"
+        },
+        {
+          "name": "3D mode (not lite)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe hint appears",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe changes shot",
+          "ok": true,
+          "detail": "0 -> 6"
+        },
+        {
+          "name": "swipe hint gone after use",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "wheel changes shot",
+          "ok": true,
+          "detail": "2 -> 3"
+        },
+        {
+          "name": "arrow key changes shot",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "hero title",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "tap hint on live planet",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "planet projected on screen",
+          "ok": true,
+          "detail": "{\"x\":199.56368690161503,\"y\":282.626671136058}"
+        },
+        {
+          "name": "dive opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card open link href",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card link target/rel",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "back closes card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live links in list",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/"
+        },
+        {
+          "name": "coming soon count",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to content",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (content)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "contacts links",
+          "ok": true,
+          "detail": "https://wa.me/972539760820?text=gallery,https://t.me/GenVidPro,https://genvidpro.com/"
+        },
+        {
+          "name": "email text + copy button",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "trace": [
+        "finishIntro false 4634     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at http://localhost:4173/assets/index-C4RkrX-1.js:8:1164",
+        "intro pointerdown mouse 206 457.5 true",
+        "finishIntro false 1639     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at HTMLDivElement.<anonymous> (http://localhost:4173/assets/index",
+        "goTo -1     at HTMLElement.<anonymous> (http://localhost:4173/assets/index-C4RkrX-1.js:8:2397)",
+        "goTo 2     at eval (eval at evaluate (:290:30), <anonymous>:1:22)",
+        "goTo 3     at w.addEventListener.passive (http://localhost:4173/assets/index-C4RkrX-1.js:8:3003)",
+        "goTo 2     at http://localhost:4173/assets/index-C4RkrX-1.js:8:3354",
+        "goTo 1     at eval (eval at evaluate (:290:30), <anonymous>:1:22)"
+      ],
+      "loadMs": 53,
+      "introMs": 4004
+    },
+    {
+      "id": "1440x900-en",
+      "checks": [
+        {
+          "name": "intro visible",
+          "ok": false,
+          "detail": ""
+        },
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro ends on its own",
+          "ok": true,
+          "detail": "4221 ms"
+        },
+        {
+          "name": "intro skipped by tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": "1440>1440"
+        },
+        {
+          "name": "3D mode (not lite)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe hint appears",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe changes shot",
+          "ok": true,
+          "detail": "0 -> 1"
+        },
+        {
+          "name": "swipe hint gone after use",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "wheel changes shot",
+          "ok": true,
+          "detail": "2 -> 3"
+        },
+        {
+          "name": "arrow key changes shot",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "hero title",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "tap hint on live planet",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "planet projected on screen",
+          "ok": true,
+          "detail": "{\"x\":1068.9294989787031,\"y\":451.2813031847507}"
+        },
+        {
+          "name": "dive opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card open link href",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card link target/rel",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "back closes card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live links in list",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/"
+        },
+        {
+          "name": "coming soon count",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to content",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (content)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "contacts links",
+          "ok": true,
+          "detail": "https://wa.me/972539760820?text=gallery,https://t.me/GenVidPro,https://genvidpro.com/"
+        },
+        {
+          "name": "email text + copy button",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "trace": [
+        "finishIntro false 4793     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at http://localhost:4173/assets/index-C4RkrX-1.js:8:1164",
+        "intro pointerdown mouse 720 450 true",
+        "finishIntro false 1700     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at HTMLDivElement.<anonymous> (http://localhost:4173/assets/index",
+        "goTo 1     at HTMLElement.<anonymous> (http://localhost:4173/assets/index-C4RkrX-1.js:8:2397)",
+        "goTo 2     at eval (eval at evaluate (:290:30), <anonymous>:1:22)",
+        "goTo 3     at w.addEventListener.passive (http://localhost:4173/assets/index-C4RkrX-1.js:8:3003)",
+        "goTo 4     at http://localhost:4173/assets/index-C4RkrX-1.js:8:3354",
+        "goTo 1     at eval (eval at evaluate (:290:30), <anonymous>:1:22)"
+      ],
+      "loadMs": 50,
+      "introMs": 4221
+    },
+    {
+      "id": "1440x900-he",
+      "checks": [
+        {
+          "name": "intro visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro ends on its own",
+          "ok": true,
+          "detail": "4425 ms"
+        },
+        {
+          "name": "intro skipped by tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": "1440>1440"
+        },
+        {
+          "name": "3D mode (not lite)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe hint appears",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "swipe changes shot",
+          "ok": true,
+          "detail": "0 -> 6"
+        },
+        {
+          "name": "swipe hint gone after use",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "wheel changes shot",
+          "ok": true,
+          "detail": "2 -> 3"
+        },
+        {
+          "name": "arrow key changes shot",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "hero title",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "tap hint on live planet",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "planet projected on screen",
+          "ok": true,
+          "detail": "{\"x\":1051.2668431979898,\"y\":448.710477222161}"
+        },
+        {
+          "name": "dive opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card open link href",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card link target/rel",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "back closes card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live links in list",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/"
+        },
+        {
+          "name": "coming soon count",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to content",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (content)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "contacts links",
+          "ok": true,
+          "detail": "https://wa.me/972539760820?text=gallery,https://t.me/GenVidPro,https://genvidpro.com/"
+        },
+        {
+          "name": "email text + copy button",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "trace": [
+        "finishIntro false 4459     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at http://localhost:4173/assets/index-C4RkrX-1.js:8:1164",
+        "intro pointerdown mouse 720 450 true",
+        "finishIntro false 4962     at B (http://localhost:4173/assets/index-C4RkrX-1.js:6:6256) <-     at HTMLDivElement.<anonymous> (http://localhost:4173/assets/index",
+        "goTo -1     at HTMLElement.<anonymous> (http://localhost:4173/assets/index-C4RkrX-1.js:8:2397)",
+        "goTo 2     at eval (eval at evaluate (:290:30), <anonymous>:1:22)",
+        "goTo 3     at w.addEventListener.passive (http://localhost:4173/assets/index-C4RkrX-1.js:8:3003)",
+        "goTo 2     at http://localhost:4173/assets/index-C4RkrX-1.js:8:3354",
+        "goTo 1     at eval (eval at evaluate (:290:30), <anonymous>:1:22)"
+      ],
+      "loadMs": 109,
+      "introMs": 4425
+    },
+    {
+      "id": "autoplay-390x844",
+      "checks": [
+        {
+          "name": "autoplay advances after ~4.5 s",
+          "ok": true,
+          "detail": "0 -> 1"
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "autoplay-1440x900",
+      "checks": [
+        {
+          "name": "autoplay advances after ~4.5 s",
+          "ok": true,
+          "detail": "0 -> 2"
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "lite": [
+    {
+      "id": "lite-nowebgl-390x844",
+      "checks": [
+        {
+          "name": "lite mode on",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite scene visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no canvas",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro gone",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite dive card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "lite-nowebgl-1440x900",
+      "checks": [
+        {
+          "name": "lite mode on",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite scene visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no canvas",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro gone",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite dive card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "lite-reduced-motion-390x844",
+      "checks": [
+        {
+          "name": "lite mode on",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite scene visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no canvas",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro gone",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite dive card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "lite-reduced-motion-1440x900",
+      "checks": [
+        {
+          "name": "lite mode on",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite scene visible",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no canvas",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "intro gone",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "lite dive card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "failures": [
+    "1440x900-en: intro visible "
+  ]
+}
