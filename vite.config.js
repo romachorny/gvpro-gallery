@@ -9,6 +9,6 @@ function iconFiles() {
 }
 
 export default defineConfig({
-  define: { __ICONS__: JSON.stringify(iconFiles()) },
+  define: { __ICONS__: JSON.stringify(iconFiles()), __BUILD__: JSON.stringify(Date.now().toString(36)) },
   build: { target: 'es2020', reportCompressedSize: true },
 });

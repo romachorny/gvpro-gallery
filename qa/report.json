@@ -1,6 +1,6 @@
 {
   "base": "http://localhost:4173",
-  "date": "2026-10-29T17:08:33.550Z",
+  "date": "2026-10-29T19:36:09.333Z",
   "runs": [
     {
       "id": "390x844-he",
@@ -68,12 +68,12 @@
         {
           "name": "soon never bursts",
           "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.30933410714113513}"
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.40386821017956}"
         },
         {
           "name": "soon wobbles",
           "ok": true,
-          "detail": "0.30933410714113513"
+          "detail": "0.40386821017956"
         },
         {
           "name": "soon toast",
@@ -183,7 +183,7 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 1849
+      "loadMs": 971
     },
     {
       "id": "390x844-en",
@@ -251,12 +251,12 @@
         {
           "name": "soon never bursts",
           "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.4999069322759822}"
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.42599258740013074}"
         },
         {
           "name": "soon wobbles",
           "ok": true,
-          "detail": "0.4999069322759822"
+          "detail": "0.42599258740013074"
         },
         {
           "name": "soon toast",
@@ -366,7 +366,7 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 224
+      "loadMs": 341
     },
     {
       "id": "412x915-he",
@@ -434,12 +434,12 @@
         {
           "name": "soon never bursts",
           "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.4493289641172216}"
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.40386821017956}"
         },
         {
           "name": "soon wobbles",
           "ok": true,
-          "detail": "0.4493289641172216"
+          "detail": "0.40386821017956"
         },
         {
           "name": "soon toast",
@@ -549,7 +549,7 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 217
+      "loadMs": 215
     },
     {
       "id": "412x915-en",
@@ -617,12 +617,12 @@
         {
           "name": "soon never bursts",
           "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.3828928859751121}"
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.5272924240430485}"
         },
         {
           "name": "soon wobbles",
           "ok": true,
-          "detail": "0.3828928859751121"
+          "detail": "0.5272924240430485"
         },
         {
           "name": "soon toast",
@@ -732,193 +732,10 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 192
+      "loadMs": 251
     },
     {
       "id": "1440x900-he",
-      "checks": [
-        {
-          "name": "html lang/dir",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "glass mode (WebGL)",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "showreel caption on its own",
-          "ok": true,
-          "detail": "Yeshli"
-        },
-        {
-          "name": "all bubbles inflated",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "size by status live > building > soon",
-          "ok": true,
-          "detail": "[[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"soon\",48]]"
-        },
-        {
-          "name": "bubbles inside the screen",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no horizontal scroll",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "spotlight advances",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "live tap bursts into droplets",
-          "ok": true,
-          "detail": "42"
-        },
-        {
-          "name": "live tap opens the app",
-          "ok": true,
-          "detail": "https://yeshli.gvpro.app/"
-        },
-        {
-          "name": "iOS motion permission asked on first tap",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "live bubble re-inflates",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "soon never bursts",
-          "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.3441537868654125}"
-        },
-        {
-          "name": "soon wobbles",
-          "ok": true,
-          "detail": "0.3441537868654125"
-        },
-        {
-          "name": "soon toast",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "soon toast says soon",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "toast inside the screen",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "bubble can be grabbed",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "thrown bubble keeps speed",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "drag does not open",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake bursts all live and building",
-          "ok": true,
-          "detail": "[[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"soon\",false]]"
-        },
-        {
-          "name": "shake keeps soon bubbles",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake pill active",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake did not open an app",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "bubbles re-inflate after ~1 s",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "mouse shake triggers",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "language switch",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "layout mirrors with direction",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "list: live links",
-          "ok": true,
-          "detail": "https://yeshli.gvpro.app/,https://tiulio.gvpro.app/,https://site.gvpro.app/,https://tamnun.gvpro.app/,https://idmatch.gvpro.app/,https://coolometer.gvpro.app/,https://tnua.gvpro.app/"
-        },
-        {
-          "name": "list: 8 apps",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no contacts or forms",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "all apps scrolls to the list",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no horizontal scroll (list)",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no request leaves localhost",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no console errors",
-          "ok": true,
-          "detail": ""
-        }
-      ],
-      "errors": [],
-      "external": [],
-      "loadMs": 287
-    },
-    {
-      "id": "1440x900-en",
       "checks": [
         {
           "name": "html lang/dir",
@@ -1098,7 +915,190 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 202
+      "loadMs": 236
+    },
+    {
+      "id": "1440x900-en",
+      "checks": [
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "glass mode (WebGL)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "showreel caption on its own",
+          "ok": true,
+          "detail": "Yeshli"
+        },
+        {
+          "name": "all bubbles inflated",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "size by status live > building > soon",
+          "ok": true,
+          "detail": "[[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"live\",95],[\"soon\",48]]"
+        },
+        {
+          "name": "bubbles inside the screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "spotlight advances",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live tap bursts into droplets",
+          "ok": true,
+          "detail": "42"
+        },
+        {
+          "name": "live tap opens the app",
+          "ok": true,
+          "detail": "https://yeshli.gvpro.app/"
+        },
+        {
+          "name": "iOS motion permission asked on first tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live bubble re-inflates",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "soon never bursts",
+          "ok": true,
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.5272924240430485}"
+        },
+        {
+          "name": "soon wobbles",
+          "ok": true,
+          "detail": "0.5272924240430485"
+        },
+        {
+          "name": "soon toast",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "soon toast says soon",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "toast inside the screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "bubble can be grabbed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "thrown bubble keeps speed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "drag does not open",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake bursts all live and building",
+          "ok": true,
+          "detail": "[[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"live\",true],[\"soon\",false]]"
+        },
+        {
+          "name": "shake keeps soon bubbles",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake pill active",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake did not open an app",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "bubbles re-inflate after ~1 s",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "mouse shake triggers",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "language switch",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "layout mirrors with direction",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "list: live links",
+          "ok": true,
+          "detail": "https://yeshli.gvpro.app/,https://tiulio.gvpro.app/,https://site.gvpro.app/,https://tamnun.gvpro.app/,https://idmatch.gvpro.app/,https://coolometer.gvpro.app/,https://tnua.gvpro.app/"
+        },
+        {
+          "name": "list: 8 apps",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no contacts or forms",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to the list",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (list)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no request leaves localhost",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "external": [],
+      "loadMs": 257
     },
     {
       "id": "lite-nowebgl-390x844-he",

@@ -64,10 +64,12 @@ function stageBox() {
   const r = stage.getBoundingClientRect();
   return { w: Math.max(1, r.width), h: Math.max(1, r.height) };
 }
+// Install banner (public/install-banner.js) sits at the bottom: bubbles, caption and Shake stay above it.
+function installH() { return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gvp-install-h')) || 0; }
 function layout() {
   const { w, h } = stageBox();
   if (OG) field.layout(w, h, { top: 18, bottom: 18, fill: 0.34 });
-  else field.layout(w, h, { top: 70, bottom: w < 700 ? 200 : 170, rtl: getLang() === 'he' });
+  else field.layout(w, h, { top: 70, bottom: (w < 700 ? 200 : 170) + installH(), rtl: getLang() === 'he' });
 }
 
 function startGlass() {
@@ -76,6 +78,7 @@ function startGlass() {
   resize();
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); toLite(); });
   window.addEventListener('resize', () => { layout(); resize(); });
+  window.addEventListener('gvp-install-change', () => { layout(); resize(); });
   if (OG) {
     field.settle(8);
     field.bubbles.forEach((b) => { b.glow = 0.6; });
@@ -96,6 +99,7 @@ function startLite() {
   layout();
   lite = createLite({ root: $('lite'), field, onTap: tap });
   window.addEventListener('resize', () => { layout(); lite.place(); });
+  window.addEventListener('gvp-install-change', () => { layout(); lite.place(); });
   bindKeys();
   reel.next = performance.now() + 600;
   if (!reducedMotion && AUTOPLAY) setInterval(() => showreel(performance.now()), 500);
@@ -314,3 +318,9 @@ function bindKeys() {
 api.tap = (i) => tap(field.bubbles[i]);
 api.shake = () => shake();
 api.point = (i) => { const b = field.bubbles[i]; const r = stage.getBoundingClientRect(); return { x: r.left + b.x, y: r.top + b.y, r: b.r }; };
+
+// Service worker (installable PWA, offline shell). ?v=<build> gives every deploy a new address,
+// so a stale copy at the Cloudflare edge can never pin phones to an old worker (#82, #86).
+if ('serviceWorker' in navigator && !OG) {
+  addEventListener('load', () => { navigator.serviceWorker.register('/sw.js?v=' + __BUILD__).catch(() => {}); });
+}
