@@ -2,15 +2,10 @@
 // no animation loop), CSS glass bubbles as real buttons, same tap rules.
 import { hash } from './field.js';
 import { iconSrc } from './ui.js';
-import { paintBackdrop } from './glass.js';
 
 export function createLite({ root, field, onTap }) {
   root.hidden = false;
   root.innerHTML = '';
-  const bg = document.createElement('canvas');
-  bg.width = bg.height = 512;
-  paintBackdrop(bg.getContext('2d'), 512);
-  root.style.backgroundImage = `url(${bg.toDataURL('image/jpeg', 0.8)})`;
   const els = field.bubbles.map((b) => {
     const el = document.createElement('button');
     el.type = 'button';

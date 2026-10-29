@@ -1,6 +1,6 @@
 {
   "base": "http://localhost:4173",
-  "date": "2026-10-29T10:11:44.679Z",
+  "date": "2026-10-29T10:18:20.335Z",
   "runs": [
     {
       "id": "390x844-he",
@@ -203,7 +203,7 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 1356
+      "loadMs": 718
     },
     {
       "id": "390x844-en",
@@ -291,12 +291,12 @@
         {
           "name": "soon never bursts",
           "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.3262797946230396}"
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.27803730045319425}"
         },
         {
           "name": "soon wobbles",
           "ok": true,
-          "detail": "0.3262797946230396"
+          "detail": "0.27803730045319425"
         },
         {
           "name": "soon toast",
@@ -406,10 +406,213 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 221
+      "loadMs": 155
     },
     {
       "id": "412x915-he",
+      "checks": [
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "glass mode (WebGL)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "showreel caption on its own",
+          "ok": true,
+          "detail": "Yeshli"
+        },
+        {
+          "name": "all bubbles inflated",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "size by status live > building > soon",
+          "ok": true,
+          "detail": "[[\"live\",77],[\"live\",77],[\"live\",77],[\"building\",57],[\"soon\",39],[\"soon\",39],[\"soon\",39],[\"soon\",39]]"
+        },
+        {
+          "name": "bubbles inside the screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "spotlight advances",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live tap bursts into droplets",
+          "ok": true,
+          "detail": "37"
+        },
+        {
+          "name": "live tap opens the app",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/"
+        },
+        {
+          "name": "iOS motion permission asked on first tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live bubble re-inflates",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "building tap opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "building card text",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "building did not navigate",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card closes",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "soon never bursts",
+          "ok": true,
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.40386821017956}"
+        },
+        {
+          "name": "soon wobbles",
+          "ok": true,
+          "detail": "0.40386821017956"
+        },
+        {
+          "name": "soon toast",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "soon toast says soon",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "toast inside the screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "bubble can be grabbed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "thrown bubble keeps speed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "drag does not open",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake bursts all live and building",
+          "ok": true,
+          "detail": "[[\"live\",true],[\"live\",true],[\"live\",true],[\"building\",true],[\"soon\",false],[\"soon\",false],[\"soon\",false],[\"soon\",false]]"
+        },
+        {
+          "name": "shake keeps soon bubbles",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake pill active",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake did not open an app",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "bubbles re-inflate after ~1 s",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "device shake triggers",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "language switch",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "layout mirrors with direction",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "list: live links",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/,https://app.genvidpro.com/"
+        },
+        {
+          "name": "list: 8 apps",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no contacts or forms",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to the list",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (list)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no request leaves localhost",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "external": [],
+      "loadMs": 248
+    },
+    {
+      "id": "412x915-en",
       "checks": [
         {
           "name": "html lang/dir",
@@ -609,10 +812,10 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 157
+      "loadMs": 158
     },
     {
-      "id": "412x915-en",
+      "id": "1440x900-he",
       "checks": [
         {
           "name": "html lang/dir",
@@ -637,7 +840,7 @@
         {
           "name": "size by status live > building > soon",
           "ok": true,
-          "detail": "[[\"live\",77],[\"live\",77],[\"live\",77],[\"building\",57],[\"soon\",39],[\"soon\",39],[\"soon\",39],[\"soon\",39]]"
+          "detail": "[[\"live\",120],[\"live\",120],[\"live\",120],[\"building\",89],[\"soon\",60],[\"soon\",60],[\"soon\",60],[\"soon\",60]]"
         },
         {
           "name": "bubbles inside the screen",
@@ -657,7 +860,210 @@
         {
           "name": "live tap bursts into droplets",
           "ok": true,
-          "detail": "37"
+          "detail": "48"
+        },
+        {
+          "name": "live tap opens the app",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/"
+        },
+        {
+          "name": "iOS motion permission asked on first tap",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live bubble re-inflates",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "building tap opens card",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "building card text",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "building did not navigate",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "card closes",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "soon never bursts",
+          "ok": true,
+          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.3262797946230396}"
+        },
+        {
+          "name": "soon wobbles",
+          "ok": true,
+          "detail": "0.3262797946230396"
+        },
+        {
+          "name": "soon toast",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "soon toast says soon",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "toast inside the screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "bubble can be grabbed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "thrown bubble keeps speed",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "drag does not open",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake bursts all live and building",
+          "ok": true,
+          "detail": "[[\"live\",true],[\"live\",true],[\"live\",true],[\"building\",true],[\"soon\",false],[\"soon\",false],[\"soon\",false],[\"soon\",false]]"
+        },
+        {
+          "name": "shake keeps soon bubbles",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake pill active",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "shake did not open an app",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "bubbles re-inflate after ~1 s",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "mouse shake triggers",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "language switch",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "layout mirrors with direction",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "list: live links",
+          "ok": true,
+          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/,https://app.genvidpro.com/"
+        },
+        {
+          "name": "list: 8 apps",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no contacts or forms",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "all apps scrolls to the list",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll (list)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no request leaves localhost",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no console errors",
+          "ok": true,
+          "detail": ""
+        }
+      ],
+      "errors": [],
+      "external": [],
+      "loadMs": 236
+    },
+    {
+      "id": "1440x900-en",
+      "checks": [
+        {
+          "name": "html lang/dir",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "glass mode (WebGL)",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "showreel caption on its own",
+          "ok": true,
+          "detail": "Yeshli"
+        },
+        {
+          "name": "all bubbles inflated",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "size by status live > building > soon",
+          "ok": true,
+          "detail": "[[\"live\",120],[\"live\",120],[\"live\",120],[\"building\",89],[\"soon\",60],[\"soon\",60],[\"soon\",60],[\"soon\",60]]"
+        },
+        {
+          "name": "bubbles inside the screen",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "no horizontal scroll",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "spotlight advances",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "name": "live tap bursts into droplets",
+          "ok": true,
+          "detail": "48"
         },
         {
           "name": "live tap opens the app",
@@ -760,209 +1166,6 @@
           "detail": ""
         },
         {
-          "name": "device shake triggers",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "language switch",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "layout mirrors with direction",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "list: live links",
-          "ok": true,
-          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/,https://app.genvidpro.com/"
-        },
-        {
-          "name": "list: 8 apps",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no contacts or forms",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "all apps scrolls to the list",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no horizontal scroll (list)",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no request leaves localhost",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no console errors",
-          "ok": true,
-          "detail": ""
-        }
-      ],
-      "errors": [],
-      "external": [],
-      "loadMs": 153
-    },
-    {
-      "id": "1440x900-he",
-      "checks": [
-        {
-          "name": "html lang/dir",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "glass mode (WebGL)",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "showreel caption on its own",
-          "ok": true,
-          "detail": "Yeshli"
-        },
-        {
-          "name": "all bubbles inflated",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "size by status live > building > soon",
-          "ok": true,
-          "detail": "[[\"live\",120],[\"live\",120],[\"live\",120],[\"building\",89],[\"soon\",60],[\"soon\",60],[\"soon\",60],[\"soon\",60]]"
-        },
-        {
-          "name": "bubbles inside the screen",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no horizontal scroll",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "spotlight advances",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "live tap bursts into droplets",
-          "ok": true,
-          "detail": "48"
-        },
-        {
-          "name": "live tap opens the app",
-          "ok": true,
-          "detail": "https://yeshli.base44.app/"
-        },
-        {
-          "name": "iOS motion permission asked on first tap",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "live bubble re-inflates",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "building tap opens card",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "building card text",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "building did not navigate",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "card closes",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "soon never bursts",
-          "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.27803730045319425}"
-        },
-        {
-          "name": "soon wobbles",
-          "ok": true,
-          "detail": "0.27803730045319425"
-        },
-        {
-          "name": "soon toast",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "soon toast says soon",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "toast inside the screen",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "bubble can be grabbed",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "thrown bubble keeps speed",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "drag does not open",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake bursts all live and building",
-          "ok": true,
-          "detail": "[[\"live\",true],[\"live\",true],[\"live\",true],[\"building\",true],[\"soon\",false],[\"soon\",false],[\"soon\",false],[\"soon\",false]]"
-        },
-        {
-          "name": "shake keeps soon bubbles",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake pill active",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake did not open an app",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "bubbles re-inflate after ~1 s",
-          "ok": true,
-          "detail": ""
-        },
-        {
           "name": "mouse shake triggers",
           "ok": true,
           "detail": ""
@@ -1015,210 +1218,7 @@
       ],
       "errors": [],
       "external": [],
-      "loadMs": 281
-    },
-    {
-      "id": "1440x900-en",
-      "checks": [
-        {
-          "name": "html lang/dir",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "glass mode (WebGL)",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "showreel caption on its own",
-          "ok": true,
-          "detail": "Yeshli"
-        },
-        {
-          "name": "all bubbles inflated",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "size by status live > building > soon",
-          "ok": true,
-          "detail": "[[\"live\",120],[\"live\",120],[\"live\",120],[\"building\",89],[\"soon\",60],[\"soon\",60],[\"soon\",60],[\"soon\",60]]"
-        },
-        {
-          "name": "bubbles inside the screen",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no horizontal scroll",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "spotlight advances",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "live tap bursts into droplets",
-          "ok": true,
-          "detail": "48"
-        },
-        {
-          "name": "live tap opens the app",
-          "ok": true,
-          "detail": "https://yeshli.base44.app/"
-        },
-        {
-          "name": "iOS motion permission asked on first tap",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "live bubble re-inflates",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "building tap opens card",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "building card text",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "building did not navigate",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "card closes",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "soon never bursts",
-          "ok": true,
-          "detail": "{\"hidden\":false,\"pop\":-1,\"wobble\":0.4493289641172216}"
-        },
-        {
-          "name": "soon wobbles",
-          "ok": true,
-          "detail": "0.4493289641172216"
-        },
-        {
-          "name": "soon toast",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "soon toast says soon",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "toast inside the screen",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "bubble can be grabbed",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "thrown bubble keeps speed",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "drag does not open",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake bursts all live and building",
-          "ok": true,
-          "detail": "[[\"live\",true],[\"live\",true],[\"live\",true],[\"building\",true],[\"soon\",false],[\"soon\",false],[\"soon\",false],[\"soon\",false]]"
-        },
-        {
-          "name": "shake keeps soon bubbles",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake pill active",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "shake did not open an app",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "bubbles re-inflate after ~1 s",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "mouse shake triggers",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "language switch",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "layout mirrors with direction",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "list: live links",
-          "ok": true,
-          "detail": "https://yeshli.base44.app/,https://tiulio.base44.app/,https://app.genvidpro.com/"
-        },
-        {
-          "name": "list: 8 apps",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no contacts or forms",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "all apps scrolls to the list",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no horizontal scroll (list)",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no request leaves localhost",
-          "ok": true,
-          "detail": ""
-        },
-        {
-          "name": "no console errors",
-          "ok": true,
-          "detail": ""
-        }
-      ],
-      "errors": [],
-      "external": [],
-      "loadMs": 251
+      "loadMs": 196
     },
     {
       "id": "lite-nowebgl-390x844-he",

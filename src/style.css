@@ -138,7 +138,15 @@ html[dir="rtl"] .pill { padding: 8px 12px 8px 16px; }
 .btn { margin-top: 22px; padding: 12px 26px; font-size: 15px; line-height: 20px; font-weight: 500; }
 
 /* Lite mode: CSS glass bubbles */
-.lite { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.lite {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(60% 45% at 18% 12%, rgba(40,110,150,0.32), transparent 70%),
+    radial-gradient(55% 45% at 88% 30%, rgba(110,70,170,0.28), transparent 70%),
+    radial-gradient(60% 40% at 50% 102%, rgba(190,120,50,0.22), transparent 70%),
+    linear-gradient(180deg, transparent 50%, rgba(170,190,230,0.06) 65%, transparent 80%),
+    #040509;
+}
 .lite[hidden] { display: none; }
 .lb {
   position: absolute; border: 0; padding: 0; cursor: pointer; border-radius: 50%;

@@ -2,36 +2,36 @@
   "mobile": {
     "url": "/?nonav=1",
     "scores": {
-      "performance": 63,
-      "accessibility": 100,
-      "best-practices": 100,
-      "seo": 100
-    },
-    "metrics": {
-      "first-contentful-paint": "0.9 s",
-      "largest-contentful-paint": "2.9 s",
-      "total-blocking-time": "3,430 ms",
-      "cumulative-layout-shift": "0.008",
-      "speed-index": "4.8 s",
-      "interactive": "4.8 s"
-    }
-  },
-  "mobile-lite": {
-    "url": "/?nonav=1&lite=1",
-    "scores": {
-      "performance": 61,
+      "performance": 64,
       "accessibility": 100,
       "best-practices": 100,
       "seo": 100
     },
     "metrics": {
       "first-contentful-paint": "1.0 s",
-      "largest-contentful-paint": "2.9 s",
-      "total-blocking-time": "3,360 ms",
+      "largest-contentful-paint": "2.7 s",
+      "total-blocking-time": "3,140 ms",
       "cumulative-layout-shift": "0.008",
-      "speed-index": "5.6 s",
-      "interactive": "4.6 s"
+      "speed-index": "4.4 s",
+      "interactive": "4.3 s"
     }
   },
-  "note": "Lighthouse 12.8.2, headless Chromium with SwiftShader (software WebGL, no GPU), simulated mobile throttling. No third-party requests. TBT of the WebGL page is CPU-rendered glass and overstates a real phone with a GPU; the lite run is the page without WebGL."
+  "mobile-lite": {
+    "url": "/?nonav=1&lite=1",
+    "scores": {
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": "0.9 s",
+      "largest-contentful-paint": "1.2 s",
+      "total-blocking-time": "70 ms",
+      "cumulative-layout-shift": "0.008",
+      "speed-index": "0.9 s",
+      "interactive": "1.2 s"
+    }
+  },
+  "note": "Lighthouse 12.8.2, headless Chromium, simulated mobile throttling, no third-party requests. The glass run uses SwiftShader (software WebGL, no GPU), so its blocking time is CPU-rendered glass and overstates a real phone with a GPU. The lite run is the page without WebGL."
 }

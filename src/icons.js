@@ -70,9 +70,13 @@ export function loadIcon(app) {
 }
 
 // Small data URL of a tile, for lite mode and the list.
+const cache = new Map();
 export function placeholderDataUrl(app, size = 128) {
+  if (cache.has(app.id)) return cache.get(app.id);
   const c = document.createElement('canvas');
   c.width = c.height = size;
   drawPlaceholder(c.getContext('2d'), 0, 0, size, app);
-  return c.toDataURL('image/png');
+  const url = c.toDataURL('image/png');
+  cache.set(app.id, url);
+  return url;
 }
