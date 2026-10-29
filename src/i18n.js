@@ -1,80 +1,54 @@
 export const STRINGS = {
-  en: {
-    presents: 'GenVidPro presents',
-    tagline: 'Apps you can try right now',
-    live: 'Live app',
-    soon: 'Coming soon',
-    open: 'Open {name}',
-    back: 'Back to the system',
-    allApps: 'All apps',
-    hintSwipe: 'Swipe to fly to the next planet',
-    hintTap: 'Tap the glowing planet to enter',
-    hintShake: 'Shake your phone',
-    system: 'The GVPro system',
-    systemLine: 'Six apps. Two already live.',
-    appsTitle: 'All apps',
-    contactsTitle: 'Contacts',
-    whatsapp: 'WhatsApp',
-    telegram: 'Telegram',
-    email: 'Email',
-    site: 'Studio site',
-    copy: 'Copy',
-    copied: 'Copied',
-    skip: 'Skip intro',
-    lang: 'עב',
-    prev: 'Previous shot',
-    next: 'Next shot',
-    shot: 'Shot',
-  },
   he: {
-    presents: 'GenVidPro מציגה',
-    tagline: 'אפליקציות שאפשר לנסות עכשיו',
-    live: 'פעילה עכשיו',
+    live: 'פעילה',
+    building: 'בבנייה',
     soon: 'בקרוב',
-    open: 'לפתוח את {name}',
-    back: 'חזרה למערכת',
+    opensSoon: 'האפליקציה תיפתח בקרוב',
+    back: 'חזרה',
+    shake: 'נערו',
+    shakeLabel: 'לנער את הבועות',
     allApps: 'כל האפליקציות',
-    hintSwipe: 'החליקו לכוכב הבא',
-    hintTap: 'געו בכוכב הזוהר כדי להיכנס',
-    hintShake: 'נערו את הטלפון',
-    system: 'מערכת GVPro',
-    systemLine: 'שש אפליקציות. שתיים כבר פעילות.',
     appsTitle: 'כל האפליקציות',
-    contactsTitle: 'יצירת קשר',
-    whatsapp: 'וואטסאפ',
-    telegram: 'טלגרם',
-    email: 'אימייל',
-    site: 'אתר הסטודיו',
-    copy: 'העתקה',
-    copied: 'הועתק',
-    skip: 'דילוג על הפתיח',
     lang: 'EN',
-    prev: 'השוט הקודם',
-    next: 'השוט הבא',
-    shot: 'שוט',
+    langLabel: 'Switch to English',
+    title: 'GVPro · אפליקציות שאפשר לנסות עכשיו',
+    stage: 'בועות האפליקציות',
+  },
+  en: {
+    live: 'Live',
+    building: 'In the works',
+    soon: 'Soon',
+    opensSoon: 'Opens soon',
+    back: 'Back',
+    shake: 'Shake',
+    shakeLabel: 'Shake the bubbles',
+    allApps: 'All apps',
+    appsTitle: 'All apps',
+    lang: 'עב',
+    langLabel: 'לעברית',
+    title: 'GVPro · apps you can try right now',
+    stage: 'App bubbles',
   },
 };
 
+// Hebrew first: Hebrew unless ?lang=en or the visitor chose English before.
 export function detectLang() {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q === 'he' || q === 'en') return q;
   try {
     const saved = localStorage.getItem('gvpro.lang');
     if (saved === 'he' || saved === 'en') return saved;
   } catch {}
-  const q = new URLSearchParams(location.search).get('lang');
-  if (q === 'he' || q === 'en') return q;
-  return (navigator.language || '').toLowerCase().startsWith('he') ? 'he' : 'en';
+  return 'he';
 }
 
-let current = 'en';
-export function setLang(lang) {
+let current = 'he';
+export function setLang(lang, { save = false } = {}) {
   current = lang;
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
-  try { localStorage.setItem('gvpro.lang', lang); } catch {}
+  if (save) { try { localStorage.setItem('gvpro.lang', lang); } catch {} }
 }
 export function getLang() { return current; }
-export function t(key, vars) {
-  let s = (STRINGS[current] && STRINGS[current][key]) || STRINGS.en[key] || key;
-  if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
-  return s;
-}
+export function t(key) { return (STRINGS[current] && STRINGS[current][key]) || STRINGS.en[key] || key; }
+export function line(app) { return app.line[current] || app.line.en; }

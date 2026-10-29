@@ -1,355 +1,316 @@
-import { APPS } from './apps.js';
+import { APPS, linkOf } from './apps.js';
 import { detectLang, setLang, getLang } from './i18n.js';
 import { createUI } from './ui.js';
-import { createLiteScene, noiseDataUrl } from './lite.js';
+import { createField } from './field.js';
+import { createGlass } from './glass.js';
+import { createLite, noiseDataUrl } from './lite.js';
 
 const $ = (id) => document.getElementById(id);
 const q = new URLSearchParams(location.search);
-const isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
-const isPhone = isTouch && Math.min(screen.width, screen.height) < 800;
+const OG = q.get('og') === '1';
+const FIXED = q.get('fixed') === '1';     // no adaptive quality (QA)
+const NONAV = q.get('nonav') === '1';     // record the link instead of leaving (QA)
+const AUTOPLAY = q.get('autoplay') !== '0';
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const OG_MODE = q.get('og') === '1';
-const NO_INTRO = q.get('nointro') === '1' || OG_MODE;
-const SHOT_SECONDS = 4.5;
-const PAUSE_SECONDS = 14;
+const SPOT_MS = 3600;
+const PAUSE_MS = 12000;
 
 setLang(detectLang());
 $('noise').style.backgroundImage = `url(${noiseDataUrl()})`;
-if (OG_MODE) document.documentElement.classList.add('og');
+if (OG) document.documentElement.classList.add('og');
 
 const stage = $('stage');
-const content = $('content');
-const intro = $('intro');
-const canvas = $('scene');
-
-let shot = 0;
-let three = null;
-let lite = null;
-let liteMode = false;
-let introDone = false;
-let diving = false;
-let lastInput = performance.now();
-let autoplayAt = 0; // time (perf.now) when autoplay should advance next
-let rafId = 0;
-let hintsDone = loadHints();
+const canvas = $('glass');
+const field = createField(APPS);
+let glass = null, lite = null;
+let raf = 0, visible = true;
+let dpr = Math.min(window.devicePixelRatio || 1, 2);
+let pausedUntil = 0;
+let last = performance.now(), acc = 0;
+let perf = { from: performance.now() + 1500, n: 0, sum: 0 };
+let drag = null;
+let shakeLock = 0;
+let motionAsked = false, motionOn = false;
+let keysBound = false;
+const ms = { x: 0, t: 0, dir: 0, flips: [] };
+let reel = { i: -1, next: 0 };
+const api = (window.__gvpro = { field, opened: null, shakes: 0, get mode() { return glass ? 'glass' : lite ? 'lite' : 'none'; } });
 
 const ui = createUI({
   apps: APPS,
-  onShot: (i) => { userAction('dots'); goTo(i); },
-  onHint: (kind) => {
-    if (kind === 'swipe') { markHint('swipe'); userAction('hint'); goTo(shot + 1); }
-    else if (kind === 'tap') { markHint('tap'); userAction('hint'); tryDive(); }
-    else if (kind === 'shake') { markHint('shake'); userAction('hint'); doShake(); }
+  onShake: () => { userAction(); requestMotion(); shake(); },
+  onLang: () => {
+    userAction();
+    setLang(getLang() === 'he' ? 'en' : 'he', { save: true });
+    ui.applyStatic();
+    layout();
+    if (lite) lite.place();
   },
-  onLang: () => { setLang(getLang() === 'he' ? 'en' : 'he'); ui.applyStatic(); ui.setShot(shot, { instant: true }); },
-  onAllApps: () => { userAction('all'); content.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' }); },
+  onAllApps: () => { userAction(); $('content').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' }); },
 });
 ui.applyStatic();
 
-// ---------- mode selection ----------
+// ---------- mode ----------
 function webglOK() {
   if (q.get('lite') === '1') return false;
-  try {
-    const c = document.createElement('canvas');
-    const gl = c.getContext('webgl2') || c.getContext('webgl');
-    return !!gl;
-  } catch { return false; }
+  try { const c = document.createElement('canvas'); return !!c.getContext('webgl'); } catch { return false; }
 }
-const weakDevice = (navigator.deviceMemory && navigator.deviceMemory <= 2);
-liteMode = !webglOK() || weakDevice || (reducedMotion && !OG_MODE);
+const weak = navigator.deviceMemory && navigator.deviceMemory <= 2;
+if (OG || (webglOK() && !weak && !reducedMotion)) {
+  try { startGlass(); } catch (e) { console.warn('glass failed, lite mode', e); startLite(); }
+} else startLite();
 
-if (liteMode) startLite();
-else startThree().catch((e) => { console.warn('3D failed, falling back to lite', e); startLite(); });
+function stageBox() {
+  const r = stage.getBoundingClientRect();
+  return { w: Math.max(1, r.width), h: Math.max(1, r.height) };
+}
+function layout() {
+  const { w, h } = stageBox();
+  if (OG) field.layout(w, h, { top: 18, bottom: 18, fill: 0.34 });
+  else field.layout(w, h, { top: 70, bottom: w < 700 ? 200 : 170, rtl: getLang() === 'he' });
+}
 
-async function startThree() {
-  const { createScene } = await import('./scene.js');
-  three = createScene({ canvas, apps: APPS, quality: q.get('quality') || 'high', isPhone });
-  onResize();
-  window.addEventListener('resize', onResize);
-  if (OG_MODE) {
-    three.posterPose();
-    three.update(0.016);
-    three.update(0.016);
-    intro.remove();
+function startGlass() {
+  glass = createGlass({ canvas, field, apps: APPS, og: OG, keep: FIXED });
+  layout();
+  resize();
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); toLite(); });
+  window.addEventListener('resize', () => { layout(); resize(); });
+  if (OG) {
+    field.settle(8);
+    field.bubbles.forEach((b) => { b.glow = 0.6; });
+    glass.render(4.0);
     document.body.classList.add('og-ready');
     return;
   }
-  const startShot = parseInt(q.get('shot') || '0', 10) || 0;
-  shot = startShot;
-  three.goTo(shot, NO_INTRO);
-  if (NO_INTRO) finishIntro(true);
-  loop();
-  if (q.get('fixed') !== '1') measureFps();
+  field.intro();
+  reel.next = performance.now() + 1800;
+  bindInput();
+  raf = requestAnimationFrame(frame);
 }
+function resize() { const { w, h } = stageBox(); glass && glass.resize(w, h, dpr); }
 
 function startLite() {
-  liteMode = true;
+  canvas.hidden = true;
+  stage.classList.add('is-lite');
+  layout();
+  lite = createLite({ root: $('lite'), field, onTap: tap });
+  window.addEventListener('resize', () => { layout(); lite.place(); });
+  bindKeys();
+  reel.next = performance.now() + 600;
+  if (!reducedMotion && AUTOPLAY) setInterval(() => showreel(performance.now()), 500);
+  else ui.setCaption(APPS[0], { instant: true });
+}
+function toLite() {
+  if (lite) return;
+  cancelAnimationFrame(raf);
+  glass = null;
   canvas.remove();
-  lite = createLiteScene({ root: $('lite-scene'), apps: APPS });
-  if (OG_MODE) { intro.remove(); return; }
-  shot = parseInt(q.get('shot') || '0', 10) || 0;
-  lite.setShot(shot);
-  if (NO_INTRO || reducedMotion) finishIntro(true); else setTimeout(() => finishIntro(false), 2600);
-}
-
-function onResize() {
-  const r = stage.getBoundingClientRect();
-  three && three.resize(Math.max(1, r.width | 0), Math.max(1, r.height | 0));
-}
-
-// ---------- intro ----------
-function finishIntro(immediate) {
-  if (introDone) return;
-  if (q.get('trace') === '1') console.log('finishIntro', immediate, performance.now() | 0, new Error().stack.split('\n').slice(1, 4).join(' <- '));
-  introDone = true;
-  three && three.skipIntro();
-  intro.classList.add('out');
-  if (immediate) intro.style.transition = 'none';
-  setTimeout(() => { intro.hidden = true; }, immediate ? 0 : 1200);
-  ui.setShot(shot, { instant: true });
-  autoplayAt = performance.now() + SHOT_SECONDS * 1000;
-  scheduleHints();
-}
-intro.addEventListener('pointerdown', (e) => { e.stopPropagation(); if (q.get('trace') === '1') console.log('intro pointerdown', e.pointerType, e.clientX, e.clientY, e.isTrusted); finishIntro(false); });
-$('intro-skip').addEventListener('click', (e) => { e.stopPropagation(); finishIntro(false); });
-
-// ---------- shots ----------
-function goTo(i) {
-  if (diving) return;
-  if (q.get('trace') === '1') console.log('goTo', i, new Error().stack.split('\n')[2]);
-  const n = APPS.length + 1;
-  shot = ((i % n) + n) % n;
-  three && three.goTo(shot);
-  lite && lite.setShot(shot);
-  ui.setShot(shot);
-  autoplayAt = performance.now() + Math.max(PAUSE_SECONDS, SHOT_SECONDS) * 1000;
-  scheduleHints();
-}
-
-function currentApp() { return shot > 0 ? APPS[shot - 1] : null; }
-
-// ---------- autoplay + hints ----------
-function userAction(kind) {
-  lastInput = performance.now();
-  autoplayAt = lastInput + PAUSE_SECONDS * 1000;
-  if (kind === 'swipe' || kind === 'wheel' || kind === 'keys') markHint('swipe');
-}
-
-let hintTimer = 0;
-function scheduleHints() {
-  clearTimeout(hintTimer);
-  if (!introDone || diving) { ui.hideHint(); return; }
-  const app = currentApp();
-  if (!hintsDone.swipe) { if (ui.hint !== 'swipe') { ui.hideHint(); hintTimer = setTimeout(() => ui.showHint('swipe'), 1400); } return; }
-  ui.hideHint();
-  if (app && app.status === 'live' && !hintsDone.tap) { hintTimer = setTimeout(() => ui.showHint('tap'), 1200); return; }
-  if (isTouch && !hintsDone.shake && !liteMode) {
-    hintTimer = setTimeout(() => { if (performance.now() - lastInput > 9500) ui.showHint('shake'); else scheduleHints(); }, 10000);
-  }
-}
-function markHint(kind) {
-  if (hintsDone[kind]) return;
-  hintsDone[kind] = true;
-  try { localStorage.setItem('gvpro.hints', JSON.stringify(hintsDone)); } catch {}
-  if (ui.hint === kind) { ui.hideHint(); setTimeout(scheduleHints, 600); }
-}
-function loadHints() {
-  if (q.get('fresh') === '1') return {};
-  try { return JSON.parse(localStorage.getItem('gvpro.hints') || '{}'); } catch { return {}; }
-}
-
-function tick(now) {
-  if (introDone && !diving && now >= autoplayAt && !reducedMotion && q.get('autoplay') !== '0') {
-    const next = (shot + 1) % (APPS.length + 1);
-    shot = next;
-    three && three.goTo(shot);
-    lite && lite.setShot(shot);
-    ui.setShot(shot);
-    autoplayAt = now + SHOT_SECONDS * 1000;
-    scheduleHints();
-  }
-}
-
-// ---------- render loop ----------
-let hidden = false;
-let frames = 0;
-function loop() {
-  rafId = requestAnimationFrame(loop);
-  if (hidden) return;
-  frames++;
-  if (frames === 2 && !introDone) {
-    // start the intro clock once the first frame (shader compile) is behind us
-    three.startIntroFlight(3.2);
-    if (q.get('intro') !== 'hold') setTimeout(() => finishIntro(false), 3400);
-  }
-  tick(performance.now());
-  three.update();
-}
-document.addEventListener('visibilitychange', () => {
-  hidden = document.hidden;
-  if (!hidden) { lastInput = performance.now(); autoplayAt = lastInput + SHOT_SECONDS * 1000; }
-});
-if (liteMode) setInterval(() => tick(performance.now()), 250);
-
-// ---------- adaptive quality ----------
-function measureFps() {
-  let frames = 0, t0 = 0, stage1 = false;
-  function sample(now) {
-    if (!t0) t0 = now;
-    frames++;
-    const el = now - t0;
-    if (el >= 2000) {
-      const fps = frames / (el / 1000);
-      if (!stage1) {
-        stage1 = true;
-        if (fps < 40) {
-          three.disableBloom();
-          three.setPixelRatio(Math.max(0.75, three.dpr * 0.7));
-          frames = 0; t0 = now;
-          requestAnimationFrame(sample);
-          return;
-        }
-        return;
-      }
-      if (fps < 28) switchToLite();
-      return;
-    }
-    requestAnimationFrame(sample);
-  }
-  requestAnimationFrame(sample);
-}
-function switchToLite() {
-  cancelAnimationFrame(rafId);
-  window.removeEventListener('resize', onResize);
-  three.dispose();
-  three = null;
   startLite();
-  lite.setShot(shot);
 }
 
-// ---------- input: swipe / wheel / keys / tap ----------
-let px = 0, py = 0, pt = 0, pointerDown = false, moved = false;
-stage.addEventListener('pointerdown', (e) => {
-  if (!introDone) return;
-  pointerDown = true; moved = false; px = e.clientX; py = e.clientY; pt = performance.now();
-  requestMotionPermission();
-});
-stage.addEventListener('pointermove', (e) => {
-  if (!pointerDown) return;
-  if (Math.abs(e.clientX - px) > 8 || Math.abs(e.clientY - py) > 8) moved = true;
-});
-stage.addEventListener('pointerup', (e) => {
-  if (!pointerDown) return;
-  pointerDown = false;
-  const dx = e.clientX - px, dy = e.clientY - py;
-  const dt = performance.now() - pt;
-  const horiz = Math.abs(dx) > Math.abs(dy);
-  const dist = horiz ? dx : dy;
-  const r = stage.getBoundingClientRect();
-  if (Math.abs(dist) > 40 && (dt < 900 || Math.abs(dist) > Math.min(r.width, r.height) * 0.2)) {
-    userAction('swipe');
-    const rtl = document.documentElement.dir === 'rtl';
-    let dir = horiz ? (dx < 0 ? 1 : -1) : (dy < 0 ? 1 : -1);
-    if (horiz && rtl) dir = -dir;
-    if (!horiz && dy < 0 && shot === APPS.length) { content.scrollIntoView({ behavior: 'smooth' }); return; }
-    goTo(shot + dir);
+// ---------- loop ----------
+function frame(now) {
+  raf = requestAnimationFrame(frame);
+  if (!visible || !glass) { last = now; return; }
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  acc += dt;
+  let steps = 0;
+  while (acc >= 1 / 60 && steps < 4) { field.step(1 / 60); acc -= 1 / 60; steps++; }
+  if (steps === 4) acc = 0;
+  showreel(now);
+  glass.render(field.t);
+  adapt(now, dt);
+}
+// Adaptive quality: lower the pixel ratio on slow phones, lite mode if still too slow.
+function adapt(now, dt) {
+  if (FIXED || now < perf.from) return;
+  perf.n++; perf.sum += dt;
+  if (perf.n < 90) return;
+  const avg = perf.sum / perf.n;
+  perf = { from: now + 1000, n: 0, sum: 0 };
+  if (avg > 0.026 && dpr > 1) { dpr = Math.max(1, dpr - 0.5); resize(); }
+  else if (avg > 0.045 && dpr <= 1) toLite();
+  else perf.from = Infinity;
+}
+document.addEventListener('visibilitychange', () => { visible = !document.hidden; });
+if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting && !document.hidden; }).observe(stage);
+
+// ---------- showreel: spotlight each app in turn, then a shake ----------
+function spotlight(i) {
+  field.bubbles.forEach((b) => { b.glowTarget = b.i === i ? 1 : 0; });
+  if (lite) lite.spotlight(i);
+  if (i >= 0) ui.setCaption(APPS[i]);
+}
+function showreel(now) {
+  if (!AUTOPLAY || now < pausedUntil || now < reel.next || ui.cardOpen) return;
+  reel.i++;
+  if (reel.i === APPS.length) {
+    spotlight(-1);
+    if (!lite || !reducedMotion) shake({ demo: true });
+    reel.next = now + 2600;
     return;
   }
-  if (!moved && dt < 500) handleTap(e.clientX, e.clientY);
-});
-stage.addEventListener('pointercancel', () => { pointerDown = false; });
-
-function handleTap(x, y) {
-  if (diving || !introDone) return;
-  if (document.getElementById('card').contains(document.elementFromPoint(x, y))) return;
-  const r = stage.getBoundingClientRect();
-  const idx = three ? three.pick(x - r.left, y - r.top) : lite.pick(x, y);
-  if (idx < 0) { userAction('tap'); return; }
-  if (idx === shot - 1) { userAction('tap'); tryDive(); }
-  else { userAction('tap'); goTo(idx + 1); }
+  if (reel.i > APPS.length) reel.i = 0;
+  spotlight(reel.i);
+  reel.next = now + SPOT_MS;
+}
+function userAction() {
+  pausedUntil = performance.now() + PAUSE_MS;
+  reel.next = pausedUntil;
 }
 
-let wheelLock = 0;
-stage.addEventListener('wheel', (e) => {
-  if (!introDone || diving) return;
-  const atLast = shot === APPS.length;
-  if (atLast && e.deltaY > 0) return; // let the page scroll to the content
-  e.preventDefault();
-  const now = performance.now();
-  if (now - wheelLock < 700 || Math.abs(e.deltaY) + Math.abs(e.deltaX) < 8) return;
-  wheelLock = now;
-  userAction('wheel');
-  const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-  goTo(shot + (d > 0 ? 1 : -1));
-}, { passive: false });
-
-window.addEventListener('keydown', (e) => {
-  if (!introDone) { if (e.key === ' ' || e.key === 'Enter' || e.key === 'Escape') finishIntro(false); return; }
-  if (diving) { if (e.key === 'Escape') undive(); return; }
-  if (window.scrollY > 40) return;
-  const rtl = document.documentElement.dir === 'rtl';
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); userAction('keys'); goTo(shot + (e.key === 'ArrowRight' && rtl ? -1 : 1)); }
-  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); userAction('keys'); goTo(shot + (e.key === 'ArrowLeft' && rtl ? 1 : -1)); }
-  else if (e.key === 'Enter') { userAction('keys'); tryDive(); }
-});
-
-// ---------- dive ----------
-function tryDive() {
-  const app = currentApp();
-  if (!app || app.status !== 'live' || diving) return;
-  markHint('tap');
-  diving = true;
-  ui.hideHint();
-  ui.showTitles(false);
-  document.body.classList.add('lock');
-  let opened = false;
-  const open = () => { if (opened || !diving) return; opened = true; ui.openCard(app, app.color); };
-  if (three) {
-    ui.floodOnly(true);
-    three.dive(shot - 1, open);
-    setTimeout(open, 1150); // wall-clock fallback: scene time can run slow on weak GPUs
-  } else open();
+// ---------- taps ----------
+function tap(b) {
+  userAction();
+  requestMotion();
+  ui.hideToast();
+  reel.i = b.i;
+  spotlight(b.i);
+  if (b.status === 'soon') {
+    if (glass) field.poke(b); else lite.wobble(b);
+    ui.showToast(b.app, b.x, b.y - b.r * Math.max(b.scale, 1), stage.getBoundingClientRect());
+    return;
+  }
+  burst(b);
+  setTimeout(() => {
+    if (b.status === 'live') openApp(b.app);
+    else ui.openCard(b.app);
+  }, 300);
 }
-function undive() {
-  if (!diving) return;
-  ui.closeCard();
-  three && three.undive();
-  diving = false;
-  document.body.classList.remove('lock');
-  setTimeout(() => { ui.setShot(shot, { instant: true }); }, 300);
-  autoplayAt = performance.now() + PAUSE_SECONDS * 1000;
-  scheduleHints();
+function burst(b) {
+  if (glass) field.burst(b, 1.0);
+  else lite.pop(b);
 }
-$('card-back').addEventListener('click', undive);
-$('card').addEventListener('pointerdown', (e) => e.stopPropagation());
-$('card').addEventListener('pointerup', (e) => e.stopPropagation());
+function openApp(app) {
+  const href = linkOf(app);
+  api.opened = href;
+  if (!href || NONAV) return;
+  location.assign(href);
+}
 
 // ---------- shake ----------
-let motionAsked = false, lastShake = 0, accPrev = null;
-function requestMotionPermission() {
-  if (motionAsked || !isTouch) return;
-  motionAsked = true;
-  const DME = window.DeviceMotionEvent;
-  if (DME && typeof DME.requestPermission === 'function') {
-    DME.requestPermission().then((s) => { if (s === 'granted') listenMotion(); }).catch(() => {});
-  } else if (DME) listenMotion();
+function shake({ demo = false } = {}) {
+  const now = performance.now();
+  if (now < shakeLock) return;
+  shakeLock = now + 1400;
+  api.shakes++;
+  ui.hideToast();
+  ui.shaking(true);
+  setTimeout(() => ui.shaking(false), 1300);
+  for (const b of field.bubbles) {
+    if (b.status === 'soon') { if (glass) field.poke(b); else lite.wobble(b); }
+    else burst(b);
+  }
+  if (!demo && navigator.vibrate) { try { navigator.vibrate(20); } catch {} }
+}
+
+// Desktop: a fast left-right mouse shake. Phone: DeviceMotion.
+function mouseShake(e) {
+  if (e.pointerType !== 'mouse' || drag) return;
+  const now = e.timeStamp, dx = e.clientX - ms.x, dt = now - ms.t;
+  ms.x = e.clientX; ms.t = now;
+  if (dt <= 0 || dt > 120) return;
+  const v = dx / dt;
+  if (Math.abs(v) < 1.1) return;
+  const dir = Math.sign(v);
+  if (dir === ms.dir) return;
+  ms.dir = dir;
+  ms.flips = ms.flips.filter((t) => now - t < 900);
+  ms.flips.push(now);
+  if (ms.flips.length >= 5) { ms.flips = []; userAction(); shake(); }
 }
 function listenMotion() {
+  if (motionOn) return;
+  motionOn = true;
+  let p = null, hits = [];
   window.addEventListener('devicemotion', (e) => {
-    const a = e.accelerationIncludingGravity;
-    if (!a) return;
-    if (accPrev) {
-      const d = Math.abs(a.x - accPrev.x) + Math.abs(a.y - accPrev.y) + Math.abs(a.z - accPrev.z);
-      if (d > 28 && performance.now() - lastShake > 1200) { lastShake = performance.now(); doShake(); }
+    const a = e.accelerationIncludingGravity || e.acceleration;
+    if (!a || a.x == null) return;
+    if (p) {
+      const d = Math.abs(a.x - p.x) + Math.abs(a.y - p.y) + Math.abs(a.z - p.z);
+      if (d > 26) {
+        const now = performance.now();
+        hits = hits.filter((t) => now - t < 700);
+        hits.push(now);
+        if (hits.length >= 3) { hits = []; userAction(); shake(); }
+      }
     }
-    accPrev = { x: a.x, y: a.y, z: a.z };
+    p = { x: a.x, y: a.y, z: a.z };
   });
 }
-function doShake() {
-  markHint('shake');
-  userAction('shake');
-  three && three.shake(1);
-  if (lite) { $('lite-scene').animate([{ transform: 'translate(0,0)' }, { transform: 'translate(-8px,4px)' }, { transform: 'translate(6px,-6px)' }, { transform: 'translate(0,0)' }], { duration: 500 }); }
+// iOS asks for permission; do it quietly on the first tap.
+function requestMotion() {
+  if (motionAsked) return;
+  motionAsked = true;
+  const D = window.DeviceMotionEvent;
+  if (D && typeof D.requestPermission === 'function') {
+    try { D.requestPermission().then((s) => { if (s === 'granted') listenMotion(); }).catch(() => {}); } catch {}
+  }
 }
-if (!isTouch) listenMotion();
-window.__gvpro = { goTo, get shot() { return shot; }, tryDive, undive, doShake, get lite() { return liteMode; }, get diving() { return diving; }, finishIntro, get three() { return three; } };
+if (window.DeviceMotionEvent && typeof window.DeviceMotionEvent.requestPermission !== 'function') listenMotion();
+else { document.addEventListener('touchend', requestMotion, { once: true, passive: true }); document.addEventListener('click', requestMotion, { once: true }); }
+
+// ---------- drag, throw, tap (glass mode) ----------
+function local(e) { const r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+function bindInput() {
+  // Let the page scroll unless the finger lands on a bubble.
+  stage.addEventListener('touchstart', (e) => {
+    const p = local(e.touches[0]);
+    if (field.hit(p.x, p.y)) e.preventDefault();
+  }, { passive: false });
+  stage.addEventListener('pointerdown', (e) => {
+    const p = local(e);
+    const b = field.hit(p.x, p.y);
+    if (!b) { ui.hideToast(); return; }
+    userAction();
+    try { stage.setPointerCapture(e.pointerId); } catch {}
+    drag = { b, id: e.pointerId, ox: b.x - p.x, oy: b.y - p.y, sx: p.x, sy: p.y, moved: false, hist: [{ x: p.x, y: p.y, t: e.timeStamp }] };
+  });
+  stage.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const p = local(e);
+    if (!drag.moved && Math.hypot(p.x - drag.sx, p.y - drag.sy) > 8) { drag.moved = true; drag.b.dragged = true; ui.hideToast(); }
+    if (!drag.moved) return;
+    drag.b.x = p.x + drag.ox; drag.b.y = p.y + drag.oy;
+    drag.hist.push({ x: p.x, y: p.y, t: e.timeStamp });
+    while (drag.hist.length > 2 && e.timeStamp - drag.hist[0].t > 90) drag.hist.shift();
+  });
+  const end = (e, cancel) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const d = drag; drag = null;
+    if (!d.moved) { if (!cancel) tap(d.b); return; }
+    const a = d.hist[0], z = d.hist[d.hist.length - 1];
+    const dt = Math.max(16, z.t - a.t) / 1000;
+    let vx = (z.x - a.x) / dt, vy = (z.y - a.y) / dt;
+    const sp = Math.hypot(vx, vy), max = 2400;
+    if (sp > max) { vx *= max / sp; vy *= max / sp; }
+    d.b.vx = cancel ? 0 : vx; d.b.vy = cancel ? 0 : vy;
+    d.b.dragged = false;
+    d.b.wobble = Math.min(1, sp / 2500);
+  };
+  stage.addEventListener('pointerup', (e) => end(e, false));
+  stage.addEventListener('pointercancel', (e) => end(e, true));
+  window.addEventListener('pointermove', mouseShake);
+  bindKeys();
+}
+function bindKeys() {
+  if (keysBound) return;
+  keysBound = true;
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { ui.closeCard(); ui.hideToast(); return; }
+    if (e.code === 'Space' || e.key === ' ') {
+      const a = document.activeElement;
+      if (a && /^(BUTTON|A|INPUT|TEXTAREA)$/.test(a.tagName)) return;
+      e.preventDefault();
+      userAction();
+      shake();
+    }
+  });
+}
+
+// QA hooks
+api.tap = (i) => tap(field.bubbles[i]);
+api.shake = () => shake();
+api.point = (i) => { const b = field.bubbles[i]; const r = stage.getBoundingClientRect(); return { x: r.left + b.x, y: r.top + b.y, r: b.r }; };

@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>GVPro — apps you can try right now</title>
-  <meta name="description" content="GVPro by GenVidPro: a living system of apps. Yeshli and Tiulio are live, four more are coming.">
-  <meta name="theme-color" content="#000000">
+  <title>אפליקציות שאפשר לנסות עכשיו</title>
+  <meta name="description" content="בועות זכוכית ובתוך כל אחת אפליקציה, נוגעים בבועה והאפליקציה נפתחת">
+  <meta name="theme-color" content="#040509">
   <link rel="canonical" href="https://gvpro.app/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -13,97 +13,83 @@
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://gvpro.app/">
-  <meta property="og:site_name" content="GVPro">
   <meta property="og:locale" content="he_IL">
   <meta property="og:title" content="אפליקציות שאפשר לנסות עכשיו">
-  <meta property="og:description" content="פותחים בטלפון ומנסים בלי להתקין">
+  <meta property="og:description" content="נוגעים בבועה והאפליקציה נפתחת בטלפון">
   <meta property="og:image" content="https://gvpro.app/og.jpg">
   <meta property="og:image:secure_url" content="https://gvpro.app/og.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="בועות זכוכית על רקע כהה">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="אפליקציות שאפשר לנסות עכשיו">
-  <meta name="twitter:description" content="פותחים בטלפון ומנסים בלי להתקין">
+  <meta name="twitter:description" content="נוגעים בבועה והאפליקציה נפתחת בטלפון">
   <meta name="twitter:image" content="https://gvpro.app/og.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500&family=Frank+Ruhl+Libre:wght@300&family=Heebo:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Heebo:wght@300;400;500&display=swap">
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
   <header class="top" id="top">
     <a class="brand" href="/" aria-label="GVPro">GVPro</a>
     <div class="top-actions">
-      <button class="chip" id="all-apps-btn" type="button">All apps</button>
-      <button class="chip" id="lang-btn" type="button" aria-label="Switch language">עב</button>
+      <button class="chip" id="all-apps-btn" type="button">כל האפליקציות</button>
+      <button class="chip" id="lang-btn" type="button" aria-label="Switch to English">EN</button>
     </div>
   </header>
 
-  <section class="stage" id="stage" aria-label="GVPro system">
-    <canvas id="scene" aria-hidden="true"></canvas>
-    <div class="lite-scene" id="lite-scene" hidden aria-hidden="true"></div>
+  <section class="stage" id="stage" aria-label="בועות האפליקציות">
+    <canvas id="glass" aria-hidden="true"></canvas>
+    <div class="lite" id="lite" hidden></div>
     <div class="noise" id="noise" aria-hidden="true"></div>
-    <div class="vignette" aria-hidden="true"></div>
 
-    <div class="intro" id="intro">
-      <div class="label intro-label" id="intro-label">GenVidPro presents</div>
-      <div class="intro-title" id="intro-title">GVPro</div>
-      <button class="intro-skip" id="intro-skip" type="button">Skip intro</button>
+    <div class="caption" id="caption" aria-live="polite">
+      <div class="cap-label" id="cap-label"></div>
+      <div class="cap-name" id="cap-name"></div>
+      <p class="cap-line" id="cap-line"></p>
     </div>
 
-    <div class="titles" id="titles" aria-live="polite">
-      <div class="label" id="shot-label"></div>
-      <h1 class="title" id="shot-title"></h1>
-      <p class="line" id="shot-line"></p>
-    </div>
-
-    <nav class="dots" id="dots" aria-label="Shots"></nav>
-
-    <button class="pill" id="hint" type="button" hidden>
-      <span class="pill-icon" id="hint-icon" aria-hidden="true"></span>
-      <span class="pill-text" id="hint-text"></span>
+    <button class="pill" id="shake" type="button" aria-label="לנער את הבועות">
+      <svg class="pill-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="phone"><rect x="9" y="4" width="10" height="20" rx="2.2"/><path d="M12.5 20.5h3"/></g><path d="M4.5 10c-1 2.5-1 5.5 0 8M23.5 10c1 2.5 1 5.5 0 8" opacity=".6"/></svg>
+      <span id="shake-text">נערו</span>
     </button>
 
-    <div class="flood" id="flood" aria-hidden="true"></div>
+    <div class="toast glass" id="toast" hidden role="status">
+      <div class="toast-name" id="toast-name"></div>
+      <p class="toast-line" id="toast-line"></p>
+      <div class="toast-soon" id="toast-soon">בקרוב</div>
+    </div>
 
-    <div class="card" id="card" hidden role="dialog" aria-modal="true">
+    <div class="card" id="card" hidden role="dialog" aria-modal="true" aria-labelledby="card-title">
       <div class="card-inner glass">
-        <img class="card-icon" id="card-icon" alt="" width="72" height="72" hidden>
-        <div class="label" id="card-label"></div>
-        <h2 class="title card-title" id="card-title"></h2>
-        <p class="line" id="card-line"></p>
-        <div class="card-actions">
-          <a class="btn btn-primary" id="card-open" href="#" target="_blank" rel="noopener">Open</a>
-          <button class="btn btn-ghost" id="card-back" type="button">Back to the system</button>
-        </div>
+        <img class="card-icon" id="card-icon" alt="" width="72" height="72">
+        <div class="cap-label" id="card-label"></div>
+        <h2 class="card-title" id="card-title"></h2>
+        <p class="card-line" id="card-line"></p>
+        <p class="card-soon" id="card-soon"></p>
+        <button class="btn" id="card-back" type="button">חזרה</button>
       </div>
     </div>
   </section>
 
   <main class="content" id="content">
     <section class="section" id="apps">
-      <div class="label" id="apps-label">All apps</div>
-      <h2 class="title h2" id="apps-title">The GVPro system</h2>
-      <p class="line" id="apps-line">Six apps. Two already live.</p>
+      <h1 class="h1" id="apps-title">כל האפליקציות</h1>
       <ul class="app-list" id="app-list">
-        <li><a href="https://yeshli.base44.app/" target="_blank" rel="noopener">Yeshli</a> — Your idea. Your app!</li>
-        <li><a href="https://tiulio.base44.app/" target="_blank" rel="noopener">Tiulio</a> — A magic film with your child inside four seasons</li>
-        <li>Coolometer — How cool are you? Get your gold medal.</li>
-        <li>Three Screens — Your site on desktop, iPhone and Android</li>
-        <li>Order Agent — Takes WhatsApp orders day and night</li>
-        <li>Logo Motion — Upload a logo, watch it move</li>
+        <li><a href="https://yeshli.base44.app/" rel="noopener">Yeshli</a> · בונים אפליקציה מתוך רעיון · פעילה</li>
+        <li><a href="https://tiulio.base44.app/" rel="noopener">Tiulio</a> · סרט קסום עם הילד שלכם בארבעה עולמות, ומראה קסומה · פעילה</li>
+        <li><a href="https://app.genvidpro.com/" rel="noopener">GVP Site</a> · בונים אתר בכמה דקות · פעילה</li>
+        <li>Tamnun AI · עוזר אישי שמפעילים בקול · בבנייה</li>
+        <li>IDMatch · היכרויות רק עם אנשים מאומתים · בקרוב</li>
+        <li>Coolometer · כמה אתם מגניבים? מדליית זהב לפרופיל שלכם · בקרוב</li>
+        <li>Tnua · אוטובוסים ומשמרות בזמן אמת לחברות הסעה · בקרוב</li>
+        <li>Merkaba · פרטים בקרוב · בקרוב</li>
       </ul>
     </section>
-
-    <section class="section" id="contacts">
-      <div class="label" id="contacts-label">Contacts</div>
-      <h2 class="title h2" id="contacts-title">GenVidPro</h2>
-      <ul class="contact-list" id="contact-list"></ul>
-    </section>
-
-    <footer class="footer" id="footer">GenVidPro · Tel Aviv</footer>
+    <footer class="footer">GVPro</footer>
   </main>
 
   <script type="module" src="/src/main.js"></script>

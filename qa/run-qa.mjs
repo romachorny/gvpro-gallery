@@ -1,14 +1,17 @@
-// QA with headless Chromium + SwiftShader. Needs a built site served at BASE (default: vite preview on 4173).
+// QA with headless Chromium + SwiftShader. Needs a built site served at BASE (vite preview on 4173).
 // Usage: npm run build && npm run qa
+// Every request that leaves localhost is blocked and counted: the page must not need the network.
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import { spawn } from 'node:child_process';
-import { writeFile } from 'node:fs/promises';
+import { writeFile, mkdir } from 'node:fs/promises';
 
 const BASE = process.env.QA_BASE || 'http://localhost:4173';
 const ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 const VIEWPORTS = (process.env.QA_VIEWPORTS || '390x844,412x915,1440x900').split(',').map((v) => v.split('x').map(Number));
-const LANGS = ['en', 'he'];
-const report = { base: BASE, runs: [], lite: [], failures: [] };
+const LANGS = ['he', 'en'];
+const LIVE = { yeshli: 'https://yeshli.base44.app/', tiulio: 'https://tiulio.base44.app/', site: 'https://app.genvidpro.com/' };
+const report = { base: BASE, date: new Date().toISOString(), runs: [], failures: [] };
+await mkdir('qa/shots', { recursive: true });
 
 async function ensureServer() {
   try { const r = await fetch(BASE); if (r.ok) return null; } catch {}
@@ -17,192 +20,204 @@ async function ensureServer() {
   throw new Error('preview server did not start');
 }
 
-async function attach(page, errors, trace) {
-  await page.route(/fonts\.googleapis\.com/, (r) => r.fulfill({ status: 200, contentType: 'text/css', body: '' }));
-  await page.route(/base44\.app\/.*(icon\.svg|apple-touch-icon\.png)/, (r) => r.fulfill({ status: 200, contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="72" height="72" rx="18" fill="#FFCA16"/></svg>' }));
-  await page.route(/fonts\.gstatic\.com/, (r) => r.abort());
-  page.on('console', (m) => {
-    if (trace && /^(goTo|finishIntro|intro pointerdown)/.test(m.text())) trace.push(m.text().slice(0, 160));
-    if (m.type() !== 'error' && m.type() !== 'warning') return;
-    const url = (m.location() || {}).url || '';
-    if (/fonts\.g(oogleapis|static)\.com/.test(url)) return; // no internet for fonts here
-    errors.push(m.type() + ': ' + m.text());
+async function newPage(browser, run, w, h, lang, { reduced = false } = {}) {
+  const mobile = w < 900;
+  const page = await browser.newPage({ viewport: { width: w, height: h }, hasTouch: mobile, isMobile: mobile, deviceScaleFactor: mobile ? 2 : 1, locale: lang === 'he' ? 'he-IL' : 'en-US' });
+  if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' });
+  // iOS-style permission prompt, to check it is asked quietly on the first tap
+  await page.addInitScript(() => {
+    window.__perm = 0;
+    if (window.DeviceMotionEvent) window.DeviceMotionEvent.requestPermission = () => { window.__perm++; return Promise.resolve('granted'); };
   });
-  page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  run.external = run.external || [];
+  await page.route(/^(?!http:\/\/localhost)/, (r) => { run.external.push(r.request().url()); r.abort(); });
+  page.on('console', (m) => {
+    if (m.type() !== 'error' && m.type() !== 'warning') return;
+    if (/ERR_FAILED/.test(m.text()) && /fonts\.g/.test((m.location() || {}).url || '')) return;
+    if (/ERR_FAILED/.test(m.text())) return; // blocked Google Fonts stylesheet
+    run.errors.push(m.type() + ': ' + m.text());
+  });
+  page.on('pageerror', (e) => run.errors.push('pageerror: ' + e.message));
+  return page;
 }
 
-const expect = (run, name, ok, detail = '') => { run.checks.push({ name, ok: !!ok, detail }); if (!ok) report.failures.push(`${run.id}: ${name} ${detail}`); };
-
-async function swipe(page, x1, y1, x2, y2) {
-  await page.mouse.move(x1, y1); await page.mouse.down();
-  for (let i = 1; i <= 6; i++) await page.mouse.move(x1 + (x2 - x1) * i / 6, y1 + (y2 - y1) * i / 6);
-  await page.mouse.up();
-}
+const expect = (run, name, ok, detail = '') => { run.checks.push({ name, ok: !!ok, detail: String(detail).slice(0, 300) }); if (!ok) report.failures.push(`${run.id}: ${name} ${detail}`); };
+const pt = (page, i) => page.evaluate((k) => window.__gvpro.point(k), i);
+const shot = (page, run, name) => page.screenshot({ path: `qa/shots/${run.id}-${name}.png` });
+const visible = (page, sel) => page.$eval(sel, (e) => !e.hidden && getComputedStyle(e).display !== 'none' && e.classList.contains('show'));
+async function tapAt(page, x, y, mobile) { if (mobile) await page.touchscreen.tap(x, y); else await page.mouse.click(x, y); }
 
 const server = await ensureServer();
 const browser = await chromium.launch({ args: ARGS });
 try {
+  // ---------- glass mode ----------
   for (const [w, h] of VIEWPORTS) for (const lang of LANGS) {
     const id = `${w}x${h}-${lang}`;
-    const run = { id, checks: [], errors: [], trace: [] };
+    const mobile = w < 900;
+    const run = { id, checks: [], errors: [] };
     report.runs.push(run);
-    let page = await browser.newPage({ viewport: { width: w, height: h }, hasTouch: w < 900, isMobile: w < 900, locale: lang === 'he' ? 'he-IL' : 'en-US' });
-    await attach(page, run.errors, run.trace);
+    const page = await newPage(browser, run, w, h, lang);
     const t0 = Date.now();
-    await page.goto(`${BASE}/?fixed=1&fresh=1&autoplay=0&trace=1&lang=${lang}`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${BASE}/?fixed=1&nonav=1&lang=${lang}`, { waitUntil: 'load' });
     run.loadMs = Date.now() - t0;
-
-    // intro plays on its own and ends within a few seconds
-    const introVisible = await page.waitForFunction(() => { const e = document.getElementById('intro'); return e && !e.hidden && !e.classList.contains('out') && getComputedStyle(e).opacity !== '0'; }, null, { timeout: 1500 }).then(() => true).catch(() => false);
-    expect(run, 'intro visible', introVisible);
     expect(run, 'html lang/dir', await page.evaluate(() => document.documentElement.lang + '/' + document.documentElement.dir) === (lang === 'he' ? 'he/rtl' : 'en/ltr'));
-    const ti = Date.now();
-    await page.screenshot({ path: `qa/${id}-0-intro.png` });
-    const ended = await page.waitForFunction(() => document.getElementById('intro').classList.contains('out'), null, { timeout: 12000 }).then(() => true).catch(() => false);
-    run.introMs = Date.now() - ti;
-    expect(run, 'intro ends on its own', ended, `${run.introMs} ms`);
-    await page.close();
+    expect(run, 'glass mode (WebGL)', (await page.evaluate(() => window.__gvpro.mode)) === 'glass');
 
-    // second load: intro is skippable by a tap
-    const page2 = await browser.newPage({ viewport: { width: w, height: h }, hasTouch: w < 900, isMobile: w < 900, locale: lang === 'he' ? 'he-IL' : 'en-US' });
-    await attach(page2, run.errors, run.trace);
-    await page2.goto(`${BASE}/?fixed=1&fresh=1&autoplay=0&trace=1&intro=hold&lang=${lang}`, { waitUntil: 'domcontentloaded' });
-    await page2.waitForTimeout(1500);
-    const wasVisible = await page2.$eval('#intro', (e) => !e.classList.contains('out'));
-    await page2.mouse.click(w / 2, h / 2);
-    await page2.waitForTimeout(400);
-    expect(run, 'intro skipped by tap', wasVisible && await page2.$eval('#intro', (e) => e.classList.contains('out')));
-    page = page2;
-    await page.waitForTimeout(5000); // let the camera settle (SwiftShader is slow)
+    // showreel plays on its own: bubbles rise, caption appears, spotlight moves
+    await page.waitForTimeout(4500);
+    const cap1 = await page.$eval('#cap-name', (e) => e.textContent);
+    expect(run, 'showreel caption on its own', await visible(page, '#caption') && cap1.length > 0, cap1);
+    expect(run, 'all bubbles inflated', await page.evaluate(() => window.__gvpro.field.bubbles.every((b) => b.scale > 0.8)));
+    const sizes = await page.evaluate(() => window.__gvpro.field.bubbles.map((b) => [b.status, Math.round(b.r)]));
+    const rOf = (s) => sizes.find((x) => x[0] === s)[1];
+    expect(run, 'size by status live > building > soon', rOf('live') > rOf('building') && rOf('building') > rOf('soon'), JSON.stringify(sizes));
+    const inside = await page.evaluate(() => { const f = window.__gvpro.field; return f.bubbles.every((b) => b.x - b.r > -2 && b.x + b.r < f.w + 2 && b.y + b.r > 0 && b.y - b.r < f.h); });
+    expect(run, 'bubbles inside the screen', inside);
+    expect(run, 'no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+    await page.waitForTimeout(3000);
+    expect(run, 'spotlight advances', (await page.$eval('#cap-name', (e) => e.textContent)) !== cap1);
+    await shot(page, run, '1-idle');
 
-    expect(run, 'no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), await page.evaluate(() => document.documentElement.scrollWidth + '>' + window.innerWidth));
-    expect(run, '3D mode (not lite)', await page.evaluate(() => !window.__gvpro.lite));
-    await page.screenshot({ path: `qa/${id}-1-wide.png` });
-
-    // hint appears
+    // LIVE: tap bursts, then the app opens (recorded, not followed)
+    let p = await pt(page, 0);
+    await tapAt(page, p.x, p.y, mobile);
+    await page.waitForTimeout(120);
+    const drops = await page.evaluate(() => window.__gvpro.field.droplets.length);
+    expect(run, 'live tap bursts into droplets', drops > 10, drops);
+    await shot(page, run, '2-burst');
+    await page.waitForTimeout(450);
+    expect(run, 'live tap opens the app', (await page.evaluate(() => window.__gvpro.opened)) === LIVE.yeshli, await page.evaluate(() => window.__gvpro.opened));
+    expect(run, 'iOS motion permission asked on first tap', (await page.evaluate(() => window.__perm)) === 1);
     await page.waitForTimeout(1200);
-    const hintShown = await page.$eval('#hint', (e) => !e.hidden && e.classList.contains('show'));
-    expect(run, 'swipe hint appears', hintShown);
+    expect(run, 'live bubble re-inflates', await page.evaluate(() => !window.__gvpro.field.bubbles[0].hidden));
 
-    // swipe changes shot (horizontal on phones, vertical too)
-    const before = await page.evaluate(() => window.__gvpro.shot);
-    await swipe(page, w * 0.7, h * 0.5, w * 0.3, h * 0.5);
-    await page.waitForTimeout(600);
-    const after = await page.evaluate(() => window.__gvpro.shot);
-    expect(run, 'swipe changes shot', after !== before, `${before} -> ${after}`);
-    await page.waitForTimeout(700);
-    expect(run, 'swipe hint gone after use', await page.$eval('#hint', (e) => e.hidden || !e.classList.contains('show')));
-
-    // wheel changes shot (not on the last shot, where wheel-down hands over to page scroll by design)
-    await page.evaluate(() => window.__gvpro.goTo(2));
-    await page.waitForTimeout(300);
-    const b2 = await page.evaluate(() => window.__gvpro.shot);
-    await page.mouse.move(w / 2, h / 2);
-    await page.mouse.wheel(0, 240);
-    await page.waitForTimeout(600);
-    const a2 = await page.evaluate(() => window.__gvpro.shot);
-    expect(run, 'wheel changes shot', a2 !== b2, `${b2} -> ${a2}`);
-
-    // keys
-    await page.keyboard.press('ArrowRight');
-    await page.waitForTimeout(400);
-    expect(run, 'arrow key changes shot', (await page.evaluate(() => window.__gvpro.shot)) !== a2);
-
-    // hero of Yeshli + dive via tap on the planet
-    await page.evaluate(() => window.__gvpro.goTo(1));
-    await page.waitForTimeout(6000);
-    await page.screenshot({ path: `qa/${id}-2-hero.png` });
-    expect(run, 'hero title', (await page.$eval('#shot-title', (e) => e.textContent.trim())) === 'Yeshli');
-    const tapHint = await page.$eval('#hint', (e) => !e.hidden && e.dataset.kind === 'tap' && e.classList.contains('show'));
-    expect(run, 'tap hint on live planet', tapHint);
-    const pt = await page.evaluate(() => {
-      const s = window.__gvpro.three; if (!s) return null;
-      const p = s.planets[0]; const v = p.group.getWorldPosition(new (p.group.position.constructor)()).project(s.camera);
-      const r = document.getElementById('stage').getBoundingClientRect();
-      return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height };
-    });
-    expect(run, 'planet projected on screen', pt && pt.x > 0 && pt.x < w && pt.y > 0 && pt.y < h, JSON.stringify(pt));
-    if (pt) { await page.mouse.click(pt.x, pt.y); }
-    await page.waitForFunction(() => { const c = document.getElementById('card'); return !c.hidden && c.classList.contains('show'); }, null, { timeout: 6000 }).catch(() => {});
-    await page.waitForTimeout(700);
-    expect(run, 'dive opens card', await page.$eval('#card', (e) => !e.hidden && e.classList.contains('show')));
-    expect(run, 'card open link href', (await page.$eval('#card-open', (e) => e.href)) === 'https://yeshli.base44.app/');
-    expect(run, 'card link target/rel', await page.$eval('#card-open', (e) => e.target === '_blank' && /noopener/.test(e.rel)));
-    await page.screenshot({ path: `qa/${id}-3-card.png` });
+    // BUILDING: burst, then a glass card
+    p = await pt(page, 3);
+    await tapAt(page, p.x, p.y, mobile);
+    await page.waitForTimeout(1400);
+    expect(run, 'building tap opens card', await visible(page, '#card'));
+    expect(run, 'building card text', (await page.$eval('#card-soon', (e) => e.textContent)) === (lang === 'he' ? 'האפליקציה תיפתח בקרוב' : 'Opens soon'));
+    expect(run, 'building did not navigate', (await page.evaluate(() => window.__gvpro.opened)) === LIVE.yeshli);
+    await shot(page, run, '3-building-card');
     await page.click('#card-back');
-    await page.waitForTimeout(1500);
-    expect(run, 'back closes card', await page.$eval('#card', (e) => e.hidden || !e.classList.contains('show')));
-
-    // app list links
-    const hrefs = await page.$$eval('#app-list a', (as) => as.map((a) => a.href));
-    expect(run, 'live links in list', hrefs.includes('https://yeshli.base44.app/') && hrefs.includes('https://tiulio.base44.app/') && hrefs.length === 2, hrefs.join(','));
-    expect(run, 'coming soon count', (await page.$$eval('#app-list .status.soon', (x) => x.length)) === 4);
-    await page.click('#all-apps-btn');
-    await page.waitForFunction(() => window.scrollY > 100, null, { timeout: 8000 }).catch(() => {});
     await page.waitForTimeout(600);
-    expect(run, 'all apps scrolls to content', await page.evaluate(() => window.scrollY > 100));
-    expect(run, 'no horizontal scroll (content)', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-    await page.screenshot({ path: `qa/${id}-4-list.png`, fullPage: false });
-    // contacts
-    const contacts = await page.$$eval('#contact-list a', (as) => as.map((a) => a.href));
-    expect(run, 'contacts links', contacts.includes('https://wa.me/972539760820?text=gallery') && contacts.includes('https://t.me/GenVidPro') && contacts.includes('https://genvidpro.com/'), contacts.join(','));
-    expect(run, 'email text + copy button', await page.evaluate(() => document.getElementById('email-text').textContent === 'genvidpro@gmail.com' && !!document.getElementById('copy-email')));
-    expect(run, 'no console errors', run.errors.length === 0, run.errors.join(' | '));
-    await page.close();
-  }
+    expect(run, 'card closes', await page.$eval('#card', (e) => e.hidden));
 
-  // Autoplay advances on its own
-  for (const [w, h] of [[390, 844], [1440, 900]]) {
-    const run = { id: `autoplay-${w}x${h}`, checks: [], errors: [] };
-    report.runs.push(run);
-    const page = await browser.newPage({ viewport: { width: w, height: h } });
-    await attach(page, run.errors);
-    await page.goto(`${BASE}/?fixed=1&fresh=1&nointro=1`, { waitUntil: 'load' });
-    await page.waitForTimeout(500);
-    const s0 = await page.evaluate(() => window.__gvpro.shot);
-    await page.waitForTimeout(6500);
-    const s1 = await page.evaluate(() => window.__gvpro.shot);
-    expect(run, 'autoplay advances after ~4.5 s', s1 !== s0, `${s0} -> ${s1}`);
-    expect(run, 'no console errors', run.errors.length === 0, run.errors.join(' | '));
-    await page.close();
-  }
+    // SOON: wobble + toast, never bursts
+    await page.waitForTimeout(800);
+    p = await pt(page, 4);
+    await tapAt(page, p.x, p.y, mobile);
+    await page.waitForTimeout(400);
+    const soon = await page.evaluate(() => { const b = window.__gvpro.field.bubbles[4]; return { hidden: b.hidden, pop: b.pop, wobble: b.wobble }; });
+    expect(run, 'soon never bursts', !soon.hidden && soon.pop < 0, JSON.stringify(soon));
+    expect(run, 'soon wobbles', soon.wobble > 0.1, soon.wobble);
+    expect(run, 'soon toast', await visible(page, '#toast'));
+    expect(run, 'soon toast says soon', (await page.$eval('#toast-soon', (e) => e.textContent)) === (lang === 'he' ? 'בקרוב' : 'Soon'));
+    const tb = await page.$eval('#toast', (e) => { const r = e.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth && r.top >= 0; });
+    expect(run, 'toast inside the screen', tb);
+    await shot(page, run, '4-soon-tap');
+    await page.waitForTimeout(3200);
 
-  // Lite: WebGL disabled
-  for (const [mode, opts] of [['nowebgl', { args: [...ARGS, '--disable-3d-apis'] }], ['reduced-motion', null]]) {
-    const b = mode === 'nowebgl' ? await chromium.launch(opts) : browser;
-    for (const [w, h] of [[390, 844], [1440, 900]]) {
-      const run = { id: `lite-${mode}-${w}x${h}`, checks: [], errors: [] };
-      report.lite.push(run);
-      const page = await b.newPage({ viewport: { width: w, height: h } });
-      if (mode === 'reduced-motion') await page.emulateMedia({ reducedMotion: 'reduce' });
-      await attach(page, run.errors);
-      await page.goto(`${BASE}/?fresh=1&lang=${w < 900 ? 'he' : 'en'}`, { waitUntil: 'load' });
-      await page.waitForTimeout(4000);
-      expect(run, 'lite mode on', await page.evaluate(() => window.__gvpro.lite));
-      expect(run, 'lite scene visible', await page.$eval('#lite-scene', (e) => !e.hidden && e.children.length > 6));
-      expect(run, 'no canvas', (await page.$('#scene')) === null);
-      expect(run, 'intro gone', await page.$eval('#intro', (e) => e.hidden || e.classList.contains('out')));
-      await page.evaluate(() => window.__gvpro.goTo(1));
-      await page.waitForTimeout(500);
-      await page.evaluate(() => window.__gvpro.tryDive());
-      await page.waitForTimeout(800);
-      expect(run, 'lite dive card', await page.$eval('#card', (e) => !e.hidden && e.classList.contains('show')));
-      await page.screenshot({ path: `qa/${run.id}-card.png` });
-      await page.click('#card-back');
-      await page.waitForTimeout(800);
-      expect(run, 'no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-      await page.screenshot({ path: `qa/${run.id}.png` });
-      expect(run, 'no console errors', run.errors.length === 0, run.errors.join(' | '));
-      await page.close();
+    // drag and throw: moves the bubble, does not open it
+    const before = await page.evaluate(() => window.__gvpro.opened);
+    p = await pt(page, 1);
+    await page.mouse.move(p.x, p.y); await page.mouse.down();
+    for (let i = 1; i <= 8; i++) await page.mouse.move(p.x + i * 6, p.y - i * 8);
+    const moved = await page.evaluate(() => window.__gvpro.field.bubbles[1].dragged);
+    await page.mouse.up();
+    expect(run, 'bubble can be grabbed', moved);
+    expect(run, 'thrown bubble keeps speed', await page.evaluate(() => Math.hypot(window.__gvpro.field.bubbles[1].vx, window.__gvpro.field.bubbles[1].vy) > 50));
+    expect(run, 'drag does not open', (await page.evaluate(() => window.__gvpro.opened)) === before);
+    await page.waitForTimeout(1500);
+
+    // SHAKE: pill on phones, Space on desktop
+    const s0 = await page.evaluate(() => window.__gvpro.shakes);
+    if (mobile) await page.tap('#shake'); else await page.keyboard.press('Space');
+    await page.waitForTimeout(150);
+    const st = await page.evaluate(() => window.__gvpro.field.bubbles.map((b) => [b.status, b.hidden || b.pop >= 0]));
+    expect(run, 'shake bursts all live and building', st.filter((x) => x[0] !== 'soon').every((x) => x[1]), JSON.stringify(st));
+    expect(run, 'shake keeps soon bubbles', st.filter((x) => x[0] === 'soon').every((x) => !x[1]));
+    expect(run, 'shake pill active', await page.$eval('#shake', (e) => e.classList.contains('active')));
+    await shot(page, run, '5-shake');
+    expect(run, 'shake did not open an app', (await page.evaluate(() => window.__gvpro.opened)) === before);
+    await page.waitForTimeout(1800);
+    expect(run, 'bubbles re-inflate after ~1 s', await page.evaluate(() => window.__gvpro.field.bubbles.every((b) => !b.hidden && b.scale > 0.5)));
+    if (mobile) {
+      // phone shake via DeviceMotion
+      await page.waitForTimeout(600);
+      await page.evaluate(() => { for (let i = 0; i < 6; i++) { const s = i % 2 ? 1 : -1; window.dispatchEvent(new DeviceMotionEvent('devicemotion', { accelerationIncludingGravity: { x: 18 * s, y: 9.8, z: 4 * s } })); } });
+      expect(run, 'device shake triggers', (await page.evaluate(() => window.__gvpro.shakes)) > s0 + 1);
+    } else {
+      // fast mouse shake
+      await page.waitForTimeout(600);
+      await page.mouse.move(700, 120);
+      for (let i = 0; i < 10; i++) await page.mouse.move(i % 2 ? 900 : 600, 120, { steps: 2 });
+      expect(run, 'mouse shake triggers', (await page.evaluate(() => window.__gvpro.shakes)) > s0 + 1);
     }
-    if (b !== browser) await b.close();
+
+    // language switch flips direction and mirrors the layout
+    const x0 = await page.evaluate(() => window.__gvpro.field.bubbles[0].hx);
+    await page.click('#lang-btn');
+    await page.waitForTimeout(300);
+    const other = lang === 'he' ? 'en' : 'he';
+    expect(run, 'language switch', await page.evaluate(() => document.documentElement.lang + '/' + document.documentElement.dir) === (other === 'he' ? 'he/rtl' : 'en/ltr'));
+    expect(run, 'layout mirrors with direction', Math.abs((await page.evaluate(() => window.__gvpro.field.bubbles[0].hx)) - x0) > 20);
+    await page.click('#lang-btn');
+
+    // plain list under the canvas
+    const hrefs = await page.$$eval('#app-list a', (as) => as.map((a) => a.href));
+    expect(run, 'list: live links', hrefs.length === 3 && Object.values(LIVE).every((u) => hrefs.includes(u)), hrefs.join(','));
+    expect(run, 'list: 8 apps', (await page.$$eval('#app-list li', (x) => x.length)) === 8);
+    expect(run, 'no contacts or forms', (await page.$$('form, input, #contact-list, a[href^="mailto:"], a[href*="wa.me"]')).length === 0);
+    await page.click('#all-apps-btn');
+    await page.waitForFunction(() => window.scrollY > 100, null, { timeout: 6000 }).catch(() => {});
+    expect(run, 'all apps scrolls to the list', await page.evaluate(() => window.scrollY > 100));
+    expect(run, 'no horizontal scroll (list)', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+    await shot(page, run, '6-list');
+    expect(run, 'no requests to gvpro.app / genvidpro.com', !run.external.some((u) => /gvpro\.app|genvidpro\.com|base44/.test(u)), run.external.join(' '));
+    expect(run, 'no console errors', run.errors.length === 0, run.errors.join(' | '));
+    await page.close();
   }
+
+  // ---------- lite mode ----------
+  const noGL = await chromium.launch({ args: [...ARGS, '--disable-3d-apis'] });
+  const liteCases = [];
+  for (const [w, h] of VIEWPORTS) for (const lang of LANGS) liteCases.push(['nowebgl', w, h, lang]);
+  liteCases.push(['reduced-motion', 390, 844, 'he'], ['reduced-motion', 1440, 900, 'en']);
+  for (const [kind, w, h, lang] of liteCases) {
+    const mobile = w < 900;
+    const run = { id: `lite-${kind}-${w}x${h}-${lang}`, checks: [], errors: [] };
+    report.runs.push(run);
+    const page = await newPage(kind === 'nowebgl' ? noGL : browser, run, w, h, lang, { reduced: kind === 'reduced-motion' });
+    await page.goto(`${BASE}/?nonav=1&lang=${lang}`, { waitUntil: 'load' });
+    await page.waitForTimeout(1500);
+    expect(run, 'lite mode on', (await page.evaluate(() => window.__gvpro.mode)) === 'lite');
+    expect(run, '8 glass buttons', (await page.$$('#lite .lb')).length === 8);
+    expect(run, 'no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+    await shot(page, run, 'idle');
+    const el = await page.$$('#lite .lb');
+    await el[4].click();
+    await page.waitForTimeout(400);
+    expect(run, 'soon toast', await visible(page, '#toast'));
+    await shot(page, run, 'soon-tap');
+    await el[3].click();
+    await page.waitForTimeout(900);
+    expect(run, 'building card', await visible(page, '#card'));
+    await page.click('#card-back');
+    await page.waitForTimeout(600);
+    await el[1].click();
+    await page.waitForTimeout(500);
+    expect(run, 'live opens', (await page.evaluate(() => window.__gvpro.opened)) === LIVE.tiulio);
+    expect(run, 'no console errors', run.errors.length === 0, run.errors.join(' | '));
+    await page.close();
+  }
+  await noGL.close();
 } finally {
   await browser.close();
   if (server) server.kill();
 }
 await writeFile('qa/report.json', JSON.stringify(report, null, 2));
-const total = [...report.runs, ...report.lite].reduce((n, r) => n + r.checks.length, 0);
+const total = report.runs.reduce((n, r) => n + r.checks.length, 0);
 console.log(`QA checks: ${total - report.failures.length}/${total} passed`);
 for (const f of report.failures) console.log('FAIL', f);
 process.exit(report.failures.length ? 1 : 0);

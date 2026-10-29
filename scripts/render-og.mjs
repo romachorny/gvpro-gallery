@@ -1,4 +1,5 @@
-// Renders public/og.jpg (1200x630, no text) from the live scene with headless Chromium + SwiftShader.
+// Renders public/og.jpg (1200x630, no text) from the real glass renderer with headless Chromium + SwiftShader.
+// Re-run after adding real icons to public/icons/.
 // Usage: npm run build && npm run preview (in another shell) && npm run og
 import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
 import { existsSync } from 'node:fs';
@@ -7,6 +8,7 @@ import { stat } from 'node:fs/promises';
 const base = process.env.OG_BASE || 'http://localhost:4173';
 const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+await page.route(/^(?!http:\/\/localhost)/, (r) => r.abort());
 await page.goto(`${base}/?og=1&fixed=1`, { waitUntil: 'load' });
 await page.waitForSelector('body.og-ready', { timeout: 30000 });
 await page.waitForTimeout(800);
@@ -20,6 +22,7 @@ for (;;) {
 }
 // Apple touch icon from the favicon (180x180)
 const icon = await browser.newPage({ viewport: { width: 180, height: 180 } });
+await icon.route(/^(?!http:\/\/localhost)/, (r) => r.abort());
 await icon.setContent(`<html><body style="margin:0;background:#000"><img src="${base}/favicon.svg" width="180" height="180"></body></html>`);
 await icon.waitForTimeout(300);
 await icon.screenshot({ path: 'public/apple-touch-icon.png', type: 'png' });
