@@ -8,7 +8,7 @@
 // Every app lives at <name>.gvpro.app in the end:
 //   url   where the app opens today
 //   home  its future address on gvpro.app
-// Flip LINK_TARGET to 'home' once the subdomains are live, and every link follows.
+// Since 29.10.2026 every live app opens on its own gvpro.app address (url === home).
 //
 // Icons: drop public/icons/<id>.png (1024 px square, rounded corners) and rebuild.
 // Until the file exists a neutral glass placeholder with the initial is drawn.
@@ -20,7 +20,7 @@ export const APPS = [
     id: 'yeshli',
     name: 'Yeshli',
     status: 'live',
-    url: 'https://yeshli.base44.app/',
+    url: 'https://yeshli.gvpro.app/',
     home: 'https://yeshli.gvpro.app/',
     tint: '#FFCA16',
     line: { he: 'בונים אפליקציה מתוך רעיון', en: 'Build an app from your idea' },
@@ -29,7 +29,7 @@ export const APPS = [
     id: 'tiulio',
     name: 'Tiulio',
     status: 'live',
-    url: 'https://tiulio.base44.app/',
+    url: 'https://tiulio.gvpro.app/',
     home: 'https://tiulio.gvpro.app/',
     tint: '#FF9E6B',
     line: { he: 'סרט קסום עם הילד שלכם בארבעה עולמות, ומראה קסומה', en: 'A magic film with your child in four worlds, plus a magic mirror' },
@@ -38,7 +38,7 @@ export const APPS = [
     id: 'site',
     name: 'GVP Site',
     status: 'live',
-    url: 'https://app.genvidpro.com/',
+    url: 'https://site.gvpro.app/',
     home: 'https://site.gvpro.app/',
     tint: '#7FD4FF',
     line: { he: 'בונים אתר בכמה דקות', en: 'Build a website in minutes' },
@@ -46,7 +46,8 @@ export const APPS = [
   {
     id: 'tamnun',
     name: 'Tamnun AI',
-    status: 'building',
+    status: 'live',
+    url: 'https://tamnun.gvpro.app/',
     home: 'https://tamnun.gvpro.app/',
     tint: '#B69CFF',
     line: { he: 'עוזר אישי שמפעילים בקול', en: 'A personal assistant you run by voice' },
@@ -54,25 +55,28 @@ export const APPS = [
   {
     id: 'idmatch',
     name: 'IDMatch',
-    status: 'soon',
+    status: 'live',
+    url: 'https://idmatch.gvpro.app/',
     home: 'https://idmatch.gvpro.app/',
-    tint: '#9FB4C8',
+    tint: '#6FE3C1',
     line: { he: 'היכרויות רק עם אנשים מאומתים', en: 'Dating with verified people only' },
   },
   {
     id: 'coolometer',
     name: 'Coolometer',
-    status: 'soon',
+    status: 'live',
+    url: 'https://coolometer.gvpro.app/',
     home: 'https://coolometer.gvpro.app/',
-    tint: '#9FB4C8',
+    tint: '#FF7EB6',
     line: { he: 'כמה אתם מגניבים? מדליית זהב לפרופיל שלכם', en: 'How cool are you? A gold medal for your profile' },
   },
   {
     id: 'tnua',
     name: 'Tnua',
-    status: 'soon',
+    status: 'live',
+    url: 'https://tnua.gvpro.app/',
     home: 'https://tnua.gvpro.app/',
-    tint: '#9FB4C8',
+    tint: '#8CF07A',
     line: { he: 'אוטובוסים ומשמרות בזמן אמת לחברות הסעה', en: 'Live buses and shifts for transport companies' },
   },
   {

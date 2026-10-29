@@ -1,15 +1,21 @@
 // QA with headless Chromium + SwiftShader. Needs a built site served at BASE (vite preview on 4173).
 // Usage: npm run build && npm run qa
 // Every request that leaves localhost is blocked and counted: the page must not need the network.
-import { chromium } from '/opt/node-tools/node_modules/playwright/index.mjs';
+// QA_PLAYWRIGHT points at another Playwright install (on roma-server: a project's node_modules/playwright/index.mjs).
+const { chromium } = await import(process.env.QA_PLAYWRIGHT || '/opt/node-tools/node_modules/playwright/index.mjs');
 import { spawn } from 'node:child_process';
 import { writeFile, mkdir } from 'node:fs/promises';
+import { APPS, linkOf } from '../src/apps.js';
 
 const BASE = process.env.QA_BASE || 'http://localhost:4173';
 const ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 const VIEWPORTS = (process.env.QA_VIEWPORTS || '390x844,412x915,1440x900').split(',').map((v) => v.split('x').map(Number));
 const LANGS = ['he', 'en'];
-const LIVE = { yeshli: 'https://yeshli.base44.app/', tiulio: 'https://tiulio.base44.app/', site: 'https://app.genvidpro.com/' };
+// Built from src/apps.js, so the QA follows the list: indexes of the first app of each status, live links by id.
+const LIVE = Object.fromEntries(APPS.filter((a) => a.status === 'live').map((a) => [a.id, linkOf(a)]));
+const IDX = { live: APPS.findIndex((a) => a.status === 'live'), building: APPS.findIndex((a) => a.status === 'building'), soon: APPS.findIndex((a) => a.status === 'soon') };
+const LIVE2 = APPS.findIndex((a, i) => a.status === 'live' && i > IDX.live);
+const N = APPS.length;
 const report = { base: BASE, date: new Date().toISOString(), runs: [], failures: [] };
 await mkdir('qa/shots', { recursive: true });
 
@@ -67,8 +73,9 @@ try {
     expect(run, 'showreel caption on its own', await visible(page, '#caption') && cap1.length > 0, cap1);
     expect(run, 'all bubbles inflated', await page.evaluate(() => window.__gvpro.field.bubbles.every((b) => b.scale > 0.8)));
     const sizes = await page.evaluate(() => window.__gvpro.field.bubbles.map((b) => [b.status, Math.round(b.r)]));
-    const rOf = (s) => sizes.find((x) => x[0] === s)[1];
-    expect(run, 'size by status live > building > soon', rOf('live') > rOf('building') && rOf('building') > rOf('soon'), JSON.stringify(sizes));
+    const rOf = (s) => (sizes.find((x) => x[0] === s) || [s, null])[1];
+    const order = ['live', 'building', 'soon'].map(rOf).filter((r) => r !== null);
+    expect(run, 'size by status live > building > soon', order.every((r, i) => i === 0 || order[i - 1] > r), JSON.stringify(sizes));
     const inside = await page.evaluate(() => { const f = window.__gvpro.field; return f.bubbles.every((b) => b.x - b.r > -2 && b.x + b.r < f.w + 2 && b.y + b.r > 0 && b.y - b.r < f.h); });
     expect(run, 'bubbles inside the screen', inside);
     expect(run, 'no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
@@ -77,36 +84,38 @@ try {
     await shot(page, run, '1-idle');
 
     // LIVE: tap bursts, then the app opens (recorded, not followed)
-    let p = await pt(page, 0);
+    let p = await pt(page, IDX.live);
     await tapAt(page, p.x, p.y, mobile);
     await page.waitForTimeout(120);
     const drops = await page.evaluate(() => window.__gvpro.field.droplets.length);
     expect(run, 'live tap bursts into droplets', drops > 10, drops);
     await shot(page, run, '2-burst');
     await page.waitForTimeout(450);
-    expect(run, 'live tap opens the app', (await page.evaluate(() => window.__gvpro.opened)) === LIVE.yeshli, await page.evaluate(() => window.__gvpro.opened));
+    expect(run, 'live tap opens the app', (await page.evaluate(() => window.__gvpro.opened)) === LIVE[APPS[IDX.live].id], await page.evaluate(() => window.__gvpro.opened));
     expect(run, 'iOS motion permission asked on first tap', (await page.evaluate(() => window.__perm)) === 1);
     await page.waitForTimeout(1200);
     expect(run, 'live bubble re-inflates', await page.evaluate(() => !window.__gvpro.field.bubbles[0].hidden));
 
-    // BUILDING: burst, then a glass card
-    p = await pt(page, 3);
+    // BUILDING: burst, then a glass card (only while the list has a building app)
+    if (IDX.building >= 0) {
+    p = await pt(page, IDX.building);
     await tapAt(page, p.x, p.y, mobile);
     await page.waitForTimeout(1400);
     expect(run, 'building tap opens card', await visible(page, '#card'));
     expect(run, 'building card text', (await page.$eval('#card-soon', (e) => e.textContent)) === (lang === 'he' ? 'האפליקציה תיפתח בקרוב' : 'Opens soon'));
-    expect(run, 'building did not navigate', (await page.evaluate(() => window.__gvpro.opened)) === LIVE.yeshli);
+    expect(run, 'building did not navigate', (await page.evaluate(() => window.__gvpro.opened)) === LIVE[APPS[IDX.live].id]);
     await shot(page, run, '3-building-card');
     await page.click('#card-back');
     await page.waitForTimeout(600);
     expect(run, 'card closes', await page.$eval('#card', (e) => e.hidden));
+    }
 
     // SOON: wobble + toast, never bursts
     await page.waitForTimeout(800);
-    p = await pt(page, 4);
+    p = await pt(page, IDX.soon);
     await tapAt(page, p.x, p.y, mobile);
     await page.waitForTimeout(400);
-    const soon = await page.evaluate(() => { const b = window.__gvpro.field.bubbles[4]; return { hidden: b.hidden, pop: b.pop, wobble: b.wobble }; });
+    const soon = await page.evaluate((k) => { const b = window.__gvpro.field.bubbles[k]; return { hidden: b.hidden, pop: b.pop, wobble: b.wobble }; }, IDX.soon);
     expect(run, 'soon never bursts', !soon.hidden && soon.pop < 0, JSON.stringify(soon));
     expect(run, 'soon wobbles', soon.wobble > 0.1, soon.wobble);
     expect(run, 'soon toast', await visible(page, '#toast'));
@@ -164,8 +173,8 @@ try {
 
     // plain list under the canvas
     const hrefs = await page.$$eval('#app-list a', (as) => as.map((a) => a.href));
-    expect(run, 'list: live links', hrefs.length === 3 && Object.values(LIVE).every((u) => hrefs.includes(u)), hrefs.join(','));
-    expect(run, 'list: 8 apps', (await page.$$eval('#app-list li', (x) => x.length)) === 8);
+    expect(run, 'list: live links', hrefs.length === Object.keys(LIVE).length && Object.values(LIVE).every((u) => hrefs.includes(u)), hrefs.join(','));
+    expect(run, `list: ${N} apps`, (await page.$$eval('#app-list li', (x) => x.length)) === N);
     expect(run, 'no contacts or forms', (await page.$$('form, input, #contact-list, a[href^="mailto:"], a[href*="wa.me"]')).length === 0);
     await page.click('#all-apps-btn');
     await page.waitForFunction(() => window.scrollY > 100, null, { timeout: 6000 }).catch(() => {});
@@ -190,22 +199,24 @@ try {
     await page.goto(`${BASE}/?nonav=1&lang=${lang}`, { waitUntil: 'load' });
     await page.waitForTimeout(1500);
     expect(run, 'lite mode on', (await page.evaluate(() => window.__gvpro.mode)) === 'lite');
-    expect(run, '8 glass buttons', (await page.$$('#lite .lb')).length === 8);
+    expect(run, `${N} glass buttons`, (await page.$$('#lite .lb')).length === N);
     expect(run, 'no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
     await shot(page, run, 'idle');
     const el = await page.$$('#lite .lb');
-    await el[4].click();
+    await el[IDX.soon].click();
     await page.waitForTimeout(400);
     expect(run, 'soon toast', await visible(page, '#toast'));
     await shot(page, run, 'soon-tap');
-    await el[3].click();
-    await page.waitForTimeout(900);
-    expect(run, 'building card', await visible(page, '#card'));
-    await page.click('#card-back');
-    await page.waitForTimeout(600);
-    await el[1].click();
+    if (IDX.building >= 0) {
+      await el[IDX.building].click();
+      await page.waitForTimeout(900);
+      expect(run, 'building card', await visible(page, '#card'));
+      await page.click('#card-back');
+      await page.waitForTimeout(600);
+    }
+    await el[LIVE2].click();
     await page.waitForTimeout(500);
-    expect(run, 'live opens', (await page.evaluate(() => window.__gvpro.opened)) === LIVE.tiulio);
+    expect(run, 'live opens', (await page.evaluate(() => window.__gvpro.opened)) === LIVE[APPS[LIVE2].id]);
     expect(run, 'no console errors', run.errors.length === 0, run.errors.join(' | '));
     await page.close();
   }
