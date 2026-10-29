@@ -2,7 +2,7 @@
 // so each deploy starts a fresh cache and drops the old ones on activate.
 const V = new URL(self.location.href).searchParams.get('v') || '0';
 const CACHE = 'gvpro-gallery-' + V;
-const CORE = ['/', '/manifest.webmanifest?v=3', '/install-banner.js?v=1', '/icon-192.png?v=2', '/icon-512.png?v=2'];
+const CORE = ['/', '/manifest.webmanifest?v=3', '/install-banner.js?v=2', '/icon-192.png?v=2', '/icon-512.png?v=2'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).catch(() => {}).then(() => self.skipWaiting()));

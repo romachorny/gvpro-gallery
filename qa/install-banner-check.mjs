@@ -35,7 +35,7 @@ for (const arg of process.argv.slice(2)) {
     const m = await cdp.send('Page.getAppManifest');
     r.manifestErrors = (m.errors || []).map(e => e.message);
     r.sw = await page.evaluate(async () => (await navigator.serviceWorker?.getRegistration())?.active?.scriptURL || null);
-    await page.waitForTimeout(800);
+    await page.locator(SEL).first().waitFor({ state: "visible", timeout: 6000 }).catch(() => {});
     r.banner = await page.locator(SEL).first().isVisible().catch(() => false);
     r.bannerText = r.banner ? (await page.locator(SEL).first().innerText()).replace(/\s+/g, ' ').trim() : '';
     await page.screenshot({ path: path.join(out, `install-banner-${name}.png`) });

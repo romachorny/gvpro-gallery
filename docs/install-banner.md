@@ -8,7 +8,7 @@ Copy it as is; do not fork the look or the text per app.
 
 ```html
 <link rel="manifest" href="/manifest.webmanifest?v=N">
-<script src="/install-banner.js?v=1" data-name="Coolometer" data-icon="/icon-192.png" defer></script>
+<script src="/install-banner.js?v=2" data-name="Coolometer" data-icon="/icon-192.png" defer></script>
 ```
 
 - `data-name` — the name after "Install"; default: `application-name` meta, else the page title.
@@ -54,7 +54,7 @@ radius 20, `rgba(22,22,28,.55)` + `backdrop-filter: blur(18px) saturate(160%)`,
 
 - Register as `/sw.js?v=<build>` (a new address every deploy); the worker names its cache
   from that `v` and deletes older caches on `activate`. Apps without a build register
-  `sw.js?v=2` and bump the `CACHE` name by hand (`-v2`) on every change.
+  `sw.js?v=N` and bump the `CACHE` name by hand (`-vN`) on every change.
 - The server sends `Cache-Control: no-cache` **and** `CDN-Cache-Control: no-store` +
   `Cloudflare-CDN-Cache-Control: no-store` for `sw.js` (gvpro-static `server.py` does it for every
   site), otherwise the Cloudflare edge pins phones to an old worker.

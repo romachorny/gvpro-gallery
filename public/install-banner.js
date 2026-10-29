@@ -1,6 +1,6 @@
-/* GVPro install banner, standard v1 (docs/install-banner.md in romachorny/gvpro-gallery).
+/* GVPro install banner, standard v2 (docs/install-banner.md in romachorny/gvpro-gallery).
  * Copy this file as is into every gvpro.app app and load it in <head>, before the app's own scripts:
- *   <script src="/install-banner.js?v=1" data-name="Coolometer" data-icon="/icon-192.png" defer></script>
+ *   <script src="/install-banner.js?v=2" data-name="Coolometer" data-icon="/icon-192.png" defer></script>
  * Android/Chrome: catches beforeinstallprompt, shows a glass banner at the bottom, Install calls prompt().
  * iOS Safari: no install event exists, the banner explains Share, then Add to Home Screen.
  * Never shown when already installed (display-mode standalone) or for 14 days after the x.
@@ -40,13 +40,14 @@
     + 'font:14px/1.3 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;direction:ltr;text-align:left;'
     + 'transform:translateY(16px);opacity:0;transition:transform .25s ease,opacity .25s ease}'
     + '#gvp-install.on{transform:none;opacity:1}'
-    + '#gvp-install img{width:40px;height:40px;border-radius:10px;flex:0 0 auto}'
-    + '#gvp-install .t{flex:1 1 auto;min-width:0}'
+    + '#gvp-install img{display:block;max-width:none;width:40px;height:40px;border-radius:10px;flex:0 0 auto}'
+    + '#gvp-install .gvp-t{flex:1 1 auto;min-width:0}'
     + '#gvp-install b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
     + '#gvp-install small{display:block;font-size:12.5px;color:rgba(255,255,255,.72);margin-top:2px}'
-    + '#gvp-install .go{flex:0 0 auto;min-height:40px;padding:0 18px;border:0;border-radius:999px;background:#fff;color:#111;font:600 14px/1 inherit;font-family:inherit;cursor:pointer}'
-    + '#gvp-install .x{flex:0 0 auto;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:rgba(255,255,255,.75);font-size:18px;line-height:1;cursor:pointer}'
-    + '#gvp-install .x:hover,#gvp-install .x:focus-visible{background:rgba(255,255,255,.12)}'
+    + '#gvp-install .gvp-go{flex:0 0 auto;min-height:40px;padding:0 18px;border:0;border-radius:999px;background:#fff;color:#111;font:600 14px/1 inherit;font-family:inherit;cursor:pointer}'
+    + '#gvp-install button{position:static;margin:0;box-shadow:none;display:inline-flex;align-items:center;justify-content:center}'
+    + '#gvp-install .gvp-x{flex:0 0 auto;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:rgba(255,255,255,.75);font-size:18px;line-height:1;cursor:pointer}'
+    + '#gvp-install .gvp-x:hover,#gvp-install .gvp-x:focus-visible{background:rgba(255,255,255,.12)}'
     + '@media (prefers-reduced-motion:reduce){#gvp-install{transition:none}}'
     + '@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){#gvp-install{background:rgba(22,22,28,.92)}}';
 
@@ -66,13 +67,13 @@
     el.id = 'gvp-install'; el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'Install app'); el.lang = 'en';
     var src = icon();
     if (src) { var img = document.createElement('img'); img.src = src; img.alt = ''; el.appendChild(img); }
-    var t = document.createElement('div'); t.className = 't';
+    var t = document.createElement('div'); t.className = 'gvp-t';
     var b = document.createElement('b'); b.textContent = 'Install ' + name();
     var s = document.createElement('small');
     s.textContent = bip ? 'Opens from your home screen, like an app' : 'Tap Share, then Add to Home Screen';
     t.appendChild(b); t.appendChild(s); el.appendChild(t);
     if (bip) {
-      var go = document.createElement('button'); go.type = 'button'; go.className = 'go'; go.textContent = 'Install';
+      var go = document.createElement('button'); go.type = 'button'; go.className = 'gvp-go'; go.textContent = 'Install';
       go.onclick = function () {
         var e = bip; bip = null; hide();
         if (!e) return;
@@ -83,7 +84,7 @@
       };
       el.appendChild(go);
     }
-    var x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = '✕';
+    var x = document.createElement('button'); x.type = 'button'; x.className = 'gvp-x'; x.textContent = '✕';
     x.setAttribute('aria-label', 'Not now'); x.title = 'Not now';
     x.onclick = function () { try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {} hide(); };
     el.appendChild(x);
