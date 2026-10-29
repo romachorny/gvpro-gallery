@@ -33,8 +33,6 @@ async function newPage(browser, run, w, h, lang, { reduced = false } = {}) {
   await page.route(/^(?!http:\/\/localhost)/, (r) => { run.external.push(r.request().url()); r.abort(); });
   page.on('console', (m) => {
     if (m.type() !== 'error' && m.type() !== 'warning') return;
-    if (/ERR_FAILED/.test(m.text()) && /fonts\.g/.test((m.location() || {}).url || '')) return;
-    if (/ERR_FAILED/.test(m.text())) return; // blocked Google Fonts stylesheet
     run.errors.push(m.type() + ': ' + m.text());
   });
   page.on('pageerror', (e) => run.errors.push('pageerror: ' + e.message));
@@ -174,7 +172,7 @@ try {
     expect(run, 'all apps scrolls to the list', await page.evaluate(() => window.scrollY > 100));
     expect(run, 'no horizontal scroll (list)', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
     await shot(page, run, '6-list');
-    expect(run, 'no requests to gvpro.app / genvidpro.com', !run.external.some((u) => /gvpro\.app|genvidpro\.com|base44/.test(u)), run.external.join(' '));
+    expect(run, 'no request leaves localhost', run.external.length === 0, run.external.join(' '));
     expect(run, 'no console errors', run.errors.length === 0, run.errors.join(' | '));
     await page.close();
   }

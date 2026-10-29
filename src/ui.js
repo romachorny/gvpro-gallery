@@ -99,7 +99,6 @@ export function createUI({ apps, onShake, onLang, onAllApps, onCardClose }) {
     $('lang-btn').textContent = t('lang');
     $('lang-btn').setAttribute('aria-label', t('langLabel'));
     $('shake-text').textContent = t('shake');
-    $('shake').setAttribute('aria-label', t('shakeLabel'));
     $('apps-title').textContent = t('appsTitle');
     $('stage').setAttribute('aria-label', t('stage'));
     document.title = t('title');

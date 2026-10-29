@@ -1,35 +1,37 @@
 {
   "mobile": {
+    "url": "/?nonav=1",
     "scores": {
-      "performance": 34,
+      "performance": 63,
       "accessibility": 100,
-      "best-practices": 96,
+      "best-practices": 100,
       "seo": 100
     },
     "metrics": {
-      "first-contentful-paint": "2.0 s",
-      "largest-contentful-paint": "8.8 s",
-      "total-blocking-time": "14,330 ms",
-      "cumulative-layout-shift": "0.034",
-      "speed-index": "18.2 s",
-      "interactive": "16.7 s"
+      "first-contentful-paint": "0.9 s",
+      "largest-contentful-paint": "2.9 s",
+      "total-blocking-time": "3,430 ms",
+      "cumulative-layout-shift": "0.008",
+      "speed-index": "4.8 s",
+      "interactive": "4.8 s"
     }
   },
   "mobile-lite": {
+    "url": "/?nonav=1&lite=1",
     "scores": {
-      "performance": 96,
+      "performance": 61,
       "accessibility": 100,
-      "best-practices": 96,
+      "best-practices": 100,
       "seo": 100
     },
     "metrics": {
-      "first-contentful-paint": "1.4 s",
-      "largest-contentful-paint": "1.4 s",
-      "total-blocking-time": "0 ms",
-      "cumulative-layout-shift": "0.034",
-      "speed-index": "5.2 s",
-      "interactive": "1.4 s"
+      "first-contentful-paint": "1.0 s",
+      "largest-contentful-paint": "2.9 s",
+      "total-blocking-time": "3,360 ms",
+      "cumulative-layout-shift": "0.008",
+      "speed-index": "5.6 s",
+      "interactive": "4.6 s"
     }
   },
-  "note": "Lighthouse 12.8, headless Chromium with SwiftShader (software WebGL), simulated mobile throttling. TBT/TTI of the 3D page are dominated by CPU-rendered WebGL and are not representative of a real phone GPU; the lite run shows the page without WebGL."
+  "note": "Lighthouse 12.8.2, headless Chromium with SwiftShader (software WebGL, no GPU), simulated mobile throttling. No third-party requests. TBT of the WebGL page is CPU-rendered glass and overstates a real phone with a GPU; the lite run is the page without WebGL."
 }
