@@ -20,11 +20,12 @@ for (;;) {
   if (size < 300 * 1024 || quality <= 50) break;
   quality -= 8;
 }
-// Apple touch icon from the favicon (180x180)
+// Apple touch icon from the favicon (180x180) — written beside, not over, the real
+// approved icon public/apple-touch-icon.png (29.10.2026).
 const icon = await browser.newPage({ viewport: { width: 180, height: 180 } });
 await icon.route(/^(?!http:\/\/localhost)/, (r) => r.abort());
 await icon.setContent(`<html><body style="margin:0;background:#000"><img src="${base}/favicon.svg" width="180" height="180"></body></html>`);
 await icon.waitForTimeout(300);
-await icon.screenshot({ path: 'public/apple-touch-icon.png', type: 'png' });
+await icon.screenshot({ path: 'qa/apple-touch-icon-from-svg.png', type: 'png' });
 await browser.close();
 console.log('done', existsSync('public/og.jpg'));

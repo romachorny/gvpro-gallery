@@ -5,7 +5,9 @@
 /* global __ICONS__ */
 const AVAILABLE = new Set(typeof __ICONS__ !== 'undefined' ? __ICONS__ : []);
 export const hasIcon = (id) => AVAILABLE.has(id);
-export const iconUrl = (id) => `/icons/${id}.png`;
+// ?v= busts phone and Cloudflare caches when the icon files change (29.10.2026: real icons).
+export const ICON_V = 2;
+export const iconUrl = (id) => `/icons/${id}.png?v=${ICON_V}`;
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
